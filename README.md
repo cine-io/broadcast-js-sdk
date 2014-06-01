@@ -3,7 +3,7 @@
 ## Installation
 
 ```html
-<script src="https://www.cine.io/compiled/cine.js"></script>
+<script src="//cdn.cine.io/cineio.js"></script>
 ```
 
 ## Usage
