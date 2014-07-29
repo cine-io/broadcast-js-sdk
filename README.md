@@ -82,8 +82,41 @@ domId is the ID of the dom node you want the publisher to be injected into.
 *  bandwidth: 1500
 *  videoQuality: 90
 
+#### Play Recording
+
+```javascript
+CineIO.playRecording(streamId, recordingName, domId, playOptions);
+```
+
+**streamId**
+
+streamId is a [cine.io](cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](cine.io) dashboard.
+
+**recordingName**
+
+recordingName is a [cine.io](cine.io) stream recording name. This is `name` field of one of the recordings when accessing the stream recordings.
+
+**domId**
+
+domId is the ID of the dom node you want the player to be injected into.
+
+**available/default playOptions are:**
+
+*  stretching: 'uniform'
+*  width: '100%'
+*  aspectratio: '16:9'
+*  autostart: true
+*  metaData: true
+*  mute: false
+*  controls: true
+*  rtmp:
+   * subscribe: true
+
+> the primary option is inconsistent for video-on-demand in jwplayer, so it has been removed from the jssdk.
+
 #### getStreamDetails
-This is used to get the play details of the stream. For example if you wanted to use your own player, you would use this to get the stream details
+
+This is used to get the play details of the stream. For example if you wanted to use your own player, you would use this to get the stream details.
 
 ```javascript
 CineIO.getStreamDetails(streamId, callback);
@@ -105,4 +138,29 @@ function(err, stream){ console.log('recieved err/stream', err, stream); }
 The stream follows the format of:
 ```json
 {"id": "the streamId", "play": {"hls": "the hls url", "rtmp": "the rtmp url"}}
+```
+
+#### getStreamRecordings
+
+This is used to get the details of the recording sessions of the stream.
+
+```javascript
+CineIO.getStreamRecordings(streamId, callback);
+```
+
+**streamId**
+
+streamId is a [cine.io](cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](cine.io) dashboard.
+
+**callback**
+
+callback is a function which returns the an error or the stream recording results. It follows the Node.js format of `(err, data)`. An example callback:
+```javascript
+function(err, recordings){ console.log('recieved err/recordings', err, recordings); }
+```
+
+**recording response**
+
+```json
+[{"name": "the recording name", size: size in bytes, url: "the playable url", date: "the date of the recording"}, … ]
 ```
