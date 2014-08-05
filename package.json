@@ -5,13 +5,14 @@
     "cine.io"
   ],
   "version": "0.1.0",
-  "description": "JSSDK for cine.io",
+  "description": "JavaScript SDK for cine.io",
   "scripts": {
-    "test": "coffeelint src/ test/ && mocha"
+    "test": "coffeelint src/ test/ && grunt test"
   },
   "repository": "https://github.com/cine-io/js-sdk",
   "dependencies": {},
   "devDependencies": {
+    "chai": "^1.9.1",
     "coffee-script": "^1.7.1",
     "coffeeify": "^0.7.0",
     "coffeelint": "^1.5.2",
@@ -20,6 +21,7 @@
     "grunt-cli": "^0.1.13",
     "grunt-contrib-coffee": "^0.10.1",
     "grunt-contrib-uglify": "^0.5.1",
+    "grunt-mocha": "^0.4.11",
     "mocha": "^1.21.3",
     "type-of": "^2.0.1"
   },

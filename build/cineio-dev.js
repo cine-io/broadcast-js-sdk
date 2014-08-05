@@ -137,13 +137,13 @@ CineIO = {
     }
     requiresInit();
     if (!streamId) {
-      throw new Error("Stream ID required");
+      throw new Error("Stream ID required.");
     }
     if (!password) {
-      throw new Error("password required");
+      throw new Error("Password required.");
     }
     if (!domNode) {
-      throw new Error("DOM node required");
+      throw new Error("DOM node required.");
     }
     return publishStream["new"](streamId, password, domNode, publishOptions);
   },
@@ -153,10 +153,10 @@ CineIO = {
     }
     requiresInit();
     if (!streamId) {
-      throw new Error("Stream ID required");
+      throw new Error("Stream ID required.");
     }
     if (!domNode) {
-      throw new Error("DOM node required");
+      throw new Error("DOM node required.");
     }
     return playStream.live(streamId, domNode, playOptions);
   },
@@ -166,22 +166,28 @@ CineIO = {
     }
     requiresInit();
     if (!streamId) {
-      throw new Error("Stream ID required");
+      throw new Error("Stream ID required.");
     }
     if (!recordingName) {
-      throw new Error("recordingName required");
+      throw new Error("Recording name required.");
     }
     if (!domNode) {
-      throw new Error("DOM node required");
+      throw new Error("DOM node required.");
     }
     return playStream.recording(streamId, recordingName, domNode, playOptions);
   },
   getStreamDetails: function(streamId, callback) {
     requiresInit();
+    if (!streamId) {
+      throw new Error("Stream ID required.");
+    }
     return ApiBridge.getStreamDetails(streamId, callback);
   },
   getStreamRecordings: function(streamId, callback) {
     requiresInit();
+    if (!streamId) {
+      throw new Error("Stream ID required.");
+    }
     return ApiBridge.getStreamRecordings(streamId, callback);
   }
 };

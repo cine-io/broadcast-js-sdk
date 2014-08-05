@@ -14,30 +14,32 @@ CineIO =
 
   publish: (streamId, password, domNode, publishOptions={})->
     requiresInit()
-    throw new Error("Stream ID required") unless streamId
-    throw new Error("password required") unless password
-    throw new Error("DOM node required") unless domNode
+    throw new Error("Stream ID required.") unless streamId
+    throw new Error("Password required.") unless password
+    throw new Error("DOM node required.") unless domNode
     publishStream.new(streamId, password, domNode, publishOptions)
 
   play: (streamId, domNode, playOptions={})->
     requiresInit()
-    throw new Error("Stream ID required") unless streamId
-    throw new Error("DOM node required") unless domNode
+    throw new Error("Stream ID required.") unless streamId
+    throw new Error("DOM node required.") unless domNode
     playStream.live(streamId, domNode, playOptions)
 
   playRecording: (streamId, recordingName, domNode, playOptions={})->
     requiresInit()
-    throw new Error("Stream ID required") unless streamId
-    throw new Error("recordingName required") unless recordingName
-    throw new Error("DOM node required") unless domNode
+    throw new Error("Stream ID required.") unless streamId
+    throw new Error("Recording name required.") unless recordingName
+    throw new Error("DOM node required.") unless domNode
     playStream.recording(streamId, recordingName, domNode, playOptions)
 
   getStreamDetails: (streamId, callback)->
     requiresInit()
+    throw new Error("Stream ID required.") unless streamId
     ApiBridge.getStreamDetails(streamId, callback)
 
   getStreamRecordings: (streamId, callback)->
     requiresInit()
+    throw new Error("Stream ID required.") unless streamId
     ApiBridge.getStreamRecordings(streamId, callback)
 
 window.CineIO = CineIO if typeof window isnt 'undefined'
