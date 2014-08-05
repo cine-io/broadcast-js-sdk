@@ -64,6 +64,13 @@ exports.getStreamDetails = function(streamId, callback) {
   return fetchUrlWitCallback(url, errorMessage, callback);
 };
 
+exports.nearestServer = function(callback) {
+  var errorMessage, url;
+  url = "" + BASE_URL + "/nearest-server?default=ok";
+  errorMessage = "Could not fetch nearest server";
+  return fetchUrlWitCallback(url, errorMessage, callback);
+};
+
 exports.getStreamRecordings = function(streamId, callback) {
   var errorMessage, url;
   url = "" + BASE_URL + "/stream/recordings?publicKey=" + Main.config.publicKey + "&id=" + streamId;
@@ -519,7 +526,7 @@ Publisher = (function() {
   Publisher.prototype._options = function(stream) {
     var intervalSecs, options;
     options = {
-      serverURL: BASE_URL,
+      serverURL: this.serverURL,
       streamName: generateStreamName(stream, this.password),
       audioCodec: this.publishOptions.audioCodec || defaultOptions.audioCodec,
       streamWidth: this.publishOptions.streamWidth || defaultOptions.streamWidth,
@@ -537,7 +544,12 @@ Publisher = (function() {
     if (cb == null) {
       cb = noop;
     }
-    return getPublisher(this.domNode, this.publishOptions, cb);
+    return ApiBridge.nearestServer((function(_this) {
+      return function(err, data) {
+        _this.serverUrl = data.transcode;
+        return getPublisher(_this.domNode, _this.publishOptions, cb);
+      };
+    })(this));
   };
 
   return Publisher;

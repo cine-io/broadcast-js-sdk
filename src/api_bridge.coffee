@@ -23,6 +23,11 @@ exports.getStreamDetails = (streamId, callback)->
   errorMessage = "Could not fetch stream #{streamId}"
   fetchUrlWitCallback(url, errorMessage, callback)
 
+exports.nearestServer = (callback)->
+  url = "#{BASE_URL}/nearest-server?default=ok"
+  errorMessage = "Could not fetch nearest server"
+  fetchUrlWitCallback(url, errorMessage, callback)
+
 exports.getStreamRecordings = (streamId, callback)->
   url = "#{BASE_URL}/stream/recordings?publicKey=#{Main.config.publicKey}&id=#{streamId}"
   errorMessage =  "Could not fetch stream recordings for #{streamId}"

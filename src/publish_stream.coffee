@@ -126,7 +126,7 @@ class Publisher
 
   _options: (stream)->
     options =
-      serverURL: BASE_URL
+      serverURL: @serverURL
       streamName: generateStreamName(stream, @password)
       audioCodec: @publishOptions.audioCodec || defaultOptions.audioCodec
       streamWidth: @publishOptions.streamWidth || defaultOptions.streamWidth
@@ -139,7 +139,9 @@ class Publisher
     options
 
   _ensureLoaded: (cb=noop)->
-    getPublisher @domNode, @publishOptions, cb
+    ApiBridge.nearestServer (err, data)=>
+      @serverUrl = data.transcode
+      getPublisher @domNode, @publishOptions, cb
 
 exports.new = (streamId, password, domNode, publishOptions)->
   new Publisher(streamId, password, domNode, publishOptions)
