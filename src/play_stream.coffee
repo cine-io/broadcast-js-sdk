@@ -98,6 +98,6 @@ exports.recording = (streamId, recordingName, domNode, playOptions)->
   ensurePlayerLoaded ->
     playRecording(streamId, recordingName, domNode, playOptions)
 
-getScript = require('./get_script')
+getScript = require('./vendor/get_script')
 flashDetect = require('./flash_detect')
 ApiBridge = require('./api_bridge')

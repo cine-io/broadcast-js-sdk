@@ -155,5 +155,5 @@ window._publisherEmit = (eventName, stuff...)->
 window._jsLogFunction = (msg)->
   console.log('_jsLogFunction', msg)
 
-getScript = require('./get_script')
+getScript = require('./vendor/get_script')
 ApiBridge = require('./api_bridge')

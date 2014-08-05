@@ -29,4 +29,4 @@ exports.getStreamRecordings = (streamId, callback)->
   fetchUrlWitCallback(url, errorMessage, callback)
 
 Main = require('./main')
-ajax = require('./ajax')
+ajax = require('./vendor/ajax')
