@@ -1,0 +1,31 @@
+{
+  "author": "Cine.io team",
+  "name": "cineio-jssdk",
+  "domains": [
+    "cine.io"
+  ],
+  "version": "0.1.0",
+  "description": "JSSDK for cine.io",
+  "scripts": {
+    "test": "coffeelint src/ test/ && mocha"
+  },
+  "repository": "https://github.com/cine-io/js-sdk",
+  "dependencies": {},
+  "devDependencies": {
+    "coffee-script": "^1.7.1",
+    "coffeeify": "^0.7.0",
+    "coffeelint": "^1.5.2",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^2.1.4",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-coffee": "^0.10.1",
+    "grunt-contrib-uglify": "^0.5.1",
+    "mocha": "^1.21.3",
+    "type-of": "^2.0.1"
+  },
+  "license": "Copyrighted / All Rights Reserved",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "private": true
+}
