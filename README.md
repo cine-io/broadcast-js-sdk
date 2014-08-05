@@ -1,5 +1,9 @@
 # [cine.io](cine.io) JS SDK
 
+[![Build Status](https://travis-ci.org/cine-io/js-sdk.svg?branch=master)](https://travis-ci.org/cine-io/js-sdk)
+
+The JavaScript SDK for [cine.io](cine.io).
+
 ## Installation
 
 ```html
