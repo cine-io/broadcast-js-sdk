@@ -2,7 +2,7 @@ publisherReady = false
 loadingSWF = false
 loadedSWF = false
 waitingPublishCalls = {}
-BASE_URL = 'rtmp://publish.west.cine.io/live'
+DEFAULT_BASE_URL = 'rtmp://publish-west.cine.io/live'
 PUBLISHER_NAME = 'Publisher'
 PUBLISHER_URL = '//cdn.cine.io/publisher.swf'
 noop = ->
@@ -126,7 +126,7 @@ class Publisher
 
   _options: (stream)->
     options =
-      serverURL: @serverURL
+      serverURL: @serverURL || DEFAULT_BASE_URL
       streamName: generateStreamName(stream, @password)
       audioCodec: @publishOptions.audioCodec || defaultOptions.audioCodec
       streamWidth: @publishOptions.streamWidth || defaultOptions.streamWidth

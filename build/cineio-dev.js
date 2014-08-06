@@ -365,7 +365,7 @@ ApiBridge = require('./api_bridge');
 
 
 },{"./api_bridge":2,"./flash_detect":3,"./vendor/get_script":8}],6:[function(require,module,exports){
-var ApiBridge, BASE_URL, PUBLISHER_NAME, PUBLISHER_URL, Publisher, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, publisherIsLoading, publisherIsReady, publisherReady, swfObjectCallbackToLoadPublisher, waitingPublishCalls,
+var ApiBridge, DEFAULT_BASE_URL, PUBLISHER_NAME, PUBLISHER_URL, Publisher, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, publisherIsLoading, publisherIsReady, publisherReady, swfObjectCallbackToLoadPublisher, waitingPublishCalls,
   __slice = [].slice;
 
 publisherReady = false;
@@ -376,7 +376,7 @@ loadedSWF = false;
 
 waitingPublishCalls = {};
 
-BASE_URL = 'rtmp://publish.west.cine.io/live';
+DEFAULT_BASE_URL = 'rtmp://publish-west.cine.io/live';
 
 PUBLISHER_NAME = 'Publisher';
 
@@ -526,7 +526,7 @@ Publisher = (function() {
   Publisher.prototype._options = function(stream) {
     var intervalSecs, options;
     options = {
-      serverURL: this.serverURL,
+      serverURL: this.serverURL || DEFAULT_BASE_URL,
       streamName: generateStreamName(stream, this.password),
       audioCodec: this.publishOptions.audioCodec || defaultOptions.audioCodec,
       streamWidth: this.publishOptions.streamWidth || defaultOptions.streamWidth,
