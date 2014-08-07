@@ -33,5 +33,8 @@ exports.getStreamRecordings = (streamId, callback)->
   errorMessage =  "Could not fetch stream recordings for #{streamId}"
   fetchUrlWitCallback(url, errorMessage, callback)
 
+exports._clear = ->
+  cachedResponses = {}
+
 Main = require('./main')
 ajax = require('./vendor/ajax')

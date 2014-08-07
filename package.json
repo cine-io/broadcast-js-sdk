@@ -24,6 +24,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha": "^0.4.11",
     "mocha": "^1.21.3",
+    "sinon": "^1.10.3",
     "type-of": "^2.0.1"
   },
   "license": "Copyrighted / All Rights Reserved",

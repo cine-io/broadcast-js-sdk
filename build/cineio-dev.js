@@ -78,6 +78,10 @@ exports.getStreamRecordings = function(streamId, callback) {
   return fetchUrlWitCallback(url, errorMessage, callback);
 };
 
+exports._clear = function() {
+  return cachedResponses = {};
+};
+
 Main = require('./main');
 
 ajax = require('./vendor/ajax');
