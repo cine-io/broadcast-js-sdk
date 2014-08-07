@@ -28,6 +28,17 @@ module.exports = (grunt) ->
         files:
           "build/cineio.js": ["build/cineio-dev.js"]
 
+    watch:
+      grunt:
+        files: ["Gruntfile.coffee"]
+
+      jssdk:
+        files: ["src/*.coffee"]
+        tasks: ["compile"]
+
+      tests:
+        files: ["test/*.coffee", "src/*.coffee", "src/**/*.js"]
+        tasks: ["browserify:tests"]
 
     mocha:
       all:
@@ -40,9 +51,11 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha');
+  grunt.loadNpmTasks "grunt-contrib-watch"
+
 
   grunt.registerTask "compile", ["browserify:jssdk", "uglify"]
 
   grunt.registerTask "test", ["browserify:tests", "mocha"]
 
-  grunt.registerTask "default", "test"
+  grunt.registerTask "default", ["browserify", "watch"]
