@@ -1,6 +1,5 @@
 ApiBridge = require('../src/api_bridge')
 ajax = require('../src/vendor/ajax')
-_ = require('underscore')
 CineIO = require('../src/main')
 
 describe 'ApiBridge', ->
