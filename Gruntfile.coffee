@@ -46,6 +46,7 @@ module.exports = (grunt) ->
       options:
         run: true
         log: true
+        reporter: 'Spec'
 
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-coffee');
