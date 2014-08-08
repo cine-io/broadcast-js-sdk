@@ -5,7 +5,6 @@ ajax = require('../src/vendor/ajax')
 async = require('async')
 flashDetect = require('../src/flash_detect')
 
-
 describe 'PlayStream', ->
   unless flashDetect()
     it 'needs to be checked in the browser'

@@ -522,16 +522,25 @@ generateStreamName = function(stream, password) {
 };
 
 Publisher = (function() {
-  function Publisher(streamId, password, domNode, publishOptions) {
+  function Publisher(streamId, password, domNode, publishOptions, callback) {
     this.streamId = streamId;
     this.password = password;
     this.domNode = domNode;
-    this.publishOptions = publishOptions;
-    this._ensureLoaded();
+    this.publishOptions = publishOptions != null ? publishOptions : {};
+    if (callback == null) {
+      callback = noop;
+    }
+    if (typeof this.publishOptions === 'function') {
+      callback = publishOptions;
+      this.publishOptions = {};
+    }
+    this._ensureLoaded(callback);
   }
 
-  Publisher.prototype.start = function() {
-    console.log('loading publisher');
+  Publisher.prototype.start = function(callback) {
+    if (callback == null) {
+      callback = noop;
+    }
     return this._ensureLoaded((function(_this) {
       return function(publisher) {
         console.log('fetching stream', publisher);
@@ -539,16 +548,28 @@ Publisher = (function() {
           var options;
           options = _this._options(stream);
           console.log('streamingggg!!', options);
+          console.log("SET OPTIONS", publisher.setOptions);
           publisher.setOptions(options);
-          return publisher.start();
+          publisher.start();
+          return callback();
         });
       };
     })(this));
   };
 
-  Publisher.prototype.stop = function() {
+  Publisher.prototype.stop = function(callback) {
+    if (callback == null) {
+      callback = noop;
+    }
     return this._ensureLoaded(function(publisher) {
-      return publisher.stop();
+      var e;
+      try {
+        publisher.stop();
+      } catch (_error) {
+        e = _error;
+        return callback(e);
+      }
+      return callback();
     });
   };
 
@@ -586,6 +607,9 @@ Publisher = (function() {
 })();
 
 exports["new"] = function(streamId, password, domNode, publishOptions) {
+  if (publishOptions == null) {
+    publishOptions = {};
+  }
   return new Publisher(streamId, password, domNode, publishOptions);
 };
 

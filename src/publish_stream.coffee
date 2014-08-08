@@ -107,22 +107,30 @@ generateStreamName = (stream, password)->
   "#{stream.streamName}?#{password}&adbe-live-event=#{stream.streamName}"
 
 class Publisher
-  constructor: (@streamId, @password, @domNode, @publishOptions)->
-    @_ensureLoaded()
+  constructor: (@streamId, @password, @domNode, @publishOptions={}, callback=noop)->
+    if typeof @publishOptions == 'function'
+      callback = publishOptions
+      @publishOptions = {}
+    @_ensureLoaded(callback)
 
-  start: ->
-    console.log('loading publisher')
+  start: (callback=noop)->
     @_ensureLoaded (publisher)=>
       console.log('fetching stream', publisher)
       ApiBridge.getStreamDetails @streamId, (err, stream)=>
         options = @_options(stream)
         console.log('streamingggg!!', options)
+        console.log("SET OPTIONS", publisher.setOptions)
         publisher.setOptions options
         publisher.start()
+        callback()
 
-  stop: ->
+  stop: (callback=noop)->
     @_ensureLoaded (publisher)->
-      publisher.stop()
+      try
+        publisher.stop()
+      catch e
+        return callback(e)
+      callback()
 
   _options: (stream)->
     options =
@@ -143,7 +151,7 @@ class Publisher
       @serverUrl = data.transcode
       getPublisher @domNode, @publishOptions, cb
 
-exports.new = (streamId, password, domNode, publishOptions)->
+exports.new = (streamId, password, domNode, publishOptions={})->
   new Publisher(streamId, password, domNode, publishOptions)
 
 window._publisherEmit = (eventName, stuff...)->

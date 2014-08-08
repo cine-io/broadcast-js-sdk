@@ -23,9 +23,12 @@
       var
         myGlobals = ['ActiveXObject', '_publisherEmit', '_jsLogFunction', 'CineIO']
       , jwPlayerGlobals = ['Base64', 'bd', 'i', 'bdn', 'jwplayer', 'console']
+      , swfobject = ['swfobject']
+      , publishGlobals = ['__flash__arrayToXML', '__flash__argumentsToXML', '__flash__objectToXML', '__flash__escapeXML', '__flash__toXML', '__flash__request']
       , flashGlobals = ['CLOSURE_NO_DEPS', '__flash_getWindowLocation', '__flash_getTopLocation']
       , youtubeGlobals = ['onYouTubeIframeAPIReady', 'YT', 'YTConfig', 'onYTReady', 'yt']
-      , allGlobals = myGlobals.concat(jwPlayerGlobals).concat(flashGlobals).concat(youtubeGlobals)
+      , chromeDevTools = ['__InspectorOverlayPage_html']
+      , allGlobals = myGlobals.concat(jwPlayerGlobals).concat(publishGlobals).concat(flashGlobals).concat(youtubeGlobals).concat(swfobject).concat(chromeDevTools)
       ;
       mocha.globals(allGlobals);
       mocha.run();
