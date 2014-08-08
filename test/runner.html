@@ -20,7 +20,14 @@
     // Only tests run in real browser, injected script run if options.run == true
     if (navigator.userAgent.indexOf('PhantomJS') < 0) {
       mocha.checkLeaks();
-      mocha.globals(['ActiveXObject', '_publisherEmit', '_jsLogFunction', 'CineIO']);
+      var
+        myGlobals = ['ActiveXObject', '_publisherEmit', '_jsLogFunction', 'CineIO']
+      , jwPlayerGlobals = ['Base64', 'bd', 'i', 'bdn', 'jwplayer', 'console']
+      , flashGlobals = ['CLOSURE_NO_DEPS', '__flash_getWindowLocation', '__flash_getTopLocation']
+      , youtubeGlobals = ['onYouTubeIframeAPIReady', 'YT', 'YTConfig', 'onYTReady', 'yt']
+      , allGlobals = myGlobals.concat(jwPlayerGlobals).concat(flashGlobals).concat(youtubeGlobals)
+      ;
+      mocha.globals(allGlobals);
       mocha.run();
     }
   </script>
