@@ -128,7 +128,7 @@ module.exports._injectNavigator = function(nav) {
 
 
 },{}],4:[function(require,module,exports){
-var ApiBridge, CineIO, playStream, publishStream, requiresInit;
+var ApiBridge, CineIO, PlayStream, PublishStream, requiresInit;
 
 requiresInit = function() {
   if (!CineIO.config.publicKey) {
@@ -168,7 +168,7 @@ CineIO = {
     if (!domNode) {
       throw new Error("DOM node required.");
     }
-    return publishStream["new"](streamId, password, domNode, publishOptions);
+    return PublishStream["new"](streamId, password, domNode, publishOptions);
   },
   play: function(streamId, domNode, playOptions) {
     if (playOptions == null) {
@@ -181,7 +181,7 @@ CineIO = {
     if (!domNode) {
       throw new Error("DOM node required.");
     }
-    return playStream.live(streamId, domNode, playOptions);
+    return PlayStream.live(streamId, domNode, playOptions);
   },
   playRecording: function(streamId, recordingName, domNode, playOptions) {
     if (playOptions == null) {
@@ -197,7 +197,7 @@ CineIO = {
     if (!domNode) {
       throw new Error("DOM node required.");
     }
-    return playStream.recording(streamId, recordingName, domNode, playOptions);
+    return PlayStream.recording(streamId, recordingName, domNode, playOptions);
   },
   getStreamDetails: function(streamId, callback) {
     requiresInit();
@@ -221,16 +221,16 @@ if (typeof window !== 'undefined') {
 
 module.exports = CineIO;
 
-playStream = require('./play_stream');
+PlayStream = require('./play_stream');
 
-publishStream = require('./publish_stream');
+PublishStream = require('./publish_stream');
 
 ApiBridge = require('./api_bridge');
 
 
 
 },{"./api_bridge":2,"./play_stream":5,"./publish_stream":6}],5:[function(require,module,exports){
-var ApiBridge, defaultOptions, enqueuePlayerCallback, ensurePlayerLoaded, flashDetect, getRecordingUrl, getScript, loadingPlayer, playLive, playNative, playRecording, playerIsReady, playerReady, startJWPlayer, userOrDefault, waitingPlayCalls;
+var ApiBridge, defaultOptions, enqueuePlayerCallback, ensurePlayerLoaded, flashDetect, getRecordingUrl, getScript, jwPlayerUrl, loadingPlayer, playLive, playNative, playRecording, playerIsReady, playerReady, startJWPlayer, userOrDefault, waitingPlayCalls;
 
 playerReady = false;
 
@@ -250,6 +250,13 @@ defaultOptions = {
   rtmp: {
     subscribe: true
   }
+};
+
+jwPlayerUrl = function() {
+  var protocol, url;
+  url = '//jwpsrv.com/library/sq8RfmIXEeOtdhIxOQfUww.js';
+  protocol = location.protocol === 'https:' ? 'https:' : 'http:';
+  return "" + protocol + url;
 };
 
 playerIsReady = function() {
@@ -274,7 +281,7 @@ ensurePlayerLoaded = function(cb) {
     return enqueuePlayerCallback(cb);
   }
   loadingPlayer = true;
-  getScript('//jwpsrv.com/library/sq8RfmIXEeOtdhIxOQfUww.js', playerIsReady);
+  getScript(jwPlayerUrl(), playerIsReady);
   return enqueuePlayerCallback(cb);
 };
 
@@ -361,12 +368,18 @@ playRecording = function(streamId, recordingName, domNode, playOptions) {
 };
 
 exports.live = function(streamId, domNode, playOptions) {
+  if (playOptions == null) {
+    playOptions = {};
+  }
   return ensurePlayerLoaded(function() {
     return playLive(streamId, domNode, playOptions);
   });
 };
 
 exports.recording = function(streamId, recordingName, domNode, playOptions) {
+  if (playOptions == null) {
+    playOptions = {};
+  }
   return ensurePlayerLoaded(function() {
     return playRecording(streamId, recordingName, domNode, playOptions);
   });

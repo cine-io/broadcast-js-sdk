@@ -14,6 +14,11 @@ defaultOptions =
   rtmp:
     subscribe: true
 
+jwPlayerUrl = ->
+  url = '//jwpsrv.com/library/sq8RfmIXEeOtdhIxOQfUww.js'
+  protocol = if location.protocol == 'https:' then 'https:' else 'http:'
+  "#{protocol}#{url}"
+
 playerIsReady = ->
   playerReady = true
   for call in waitingPlayCalls
@@ -27,7 +32,8 @@ ensurePlayerLoaded = (cb)->
   return cb() if playerReady
   return enqueuePlayerCallback(cb) if loadingPlayer
   loadingPlayer = true
-  getScript '//jwpsrv.com/library/sq8RfmIXEeOtdhIxOQfUww.js', playerIsReady
+
+  getScript jwPlayerUrl(), playerIsReady
   enqueuePlayerCallback cb
 
 userOrDefault = (userOptions, key)->
@@ -90,11 +96,11 @@ playRecording = (streamId, recordingName, domNode, playOptions)->
     playOptions.primary = null
     startJWPlayer(recordingUrl, recordingUrl, domNode, playOptions)
 
-exports.live = (streamId, domNode, playOptions)->
+exports.live = (streamId, domNode, playOptions={})->
   ensurePlayerLoaded ->
     playLive(streamId, domNode, playOptions)
 
-exports.recording = (streamId, recordingName, domNode, playOptions)->
+exports.recording = (streamId, recordingName, domNode, playOptions={})->
   ensurePlayerLoaded ->
     playRecording(streamId, recordingName, domNode, playOptions)
 
