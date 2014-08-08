@@ -20,7 +20,7 @@
     // Only tests run in real browser, injected script run if options.run == true
     if (navigator.userAgent.indexOf('PhantomJS') < 0) {
       mocha.checkLeaks();
-      mocha.globals(['_publisherEmit', '_jsLogFunction', 'CineIO']);
+      mocha.globals(['ActiveXObject', '_publisherEmit', '_jsLogFunction', 'CineIO']);
       mocha.run();
     }
   </script>

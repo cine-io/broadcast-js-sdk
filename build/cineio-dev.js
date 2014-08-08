@@ -89,6 +89,14 @@ ajax = require('./vendor/ajax');
 
 
 },{"./main":4,"./vendor/ajax":7}],3:[function(require,module,exports){
+var getNavigator, newNavigator;
+
+newNavigator = null;
+
+getNavigator = function() {
+  return newNavigator || navigator;
+};
+
 module.exports = function() {
   var e;
   try {
@@ -97,20 +105,24 @@ module.exports = function() {
     }
   } catch (_error) {
     e = _error;
-    if (typeof navigator === 'undefined') {
+    if (typeof getNavigator() === 'undefined') {
       return false;
     }
-    if (!navigator.mimeTypes) {
+    if (!getNavigator().mimeTypes) {
       return false;
     }
-    if (navigator.mimeTypes["application/x-shockwave-flash"] === void 0) {
+    if (getNavigator().mimeTypes["application/x-shockwave-flash"] === void 0) {
       return false;
     }
-    if (navigator.mimeTypes["application/x-shockwave-flash"].enabledPlugin) {
+    if (getNavigator().mimeTypes["application/x-shockwave-flash"].enabledPlugin) {
       return true;
     }
   }
   return false;
+};
+
+module.exports._injectNavigator = function(nav) {
+  return newNavigator = nav;
 };
 
 

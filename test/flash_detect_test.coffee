@@ -16,31 +16,29 @@ describe 'flashDetect', ->
 
   describe 'navigator support', ->
     beforeEach ->
-      global.navigator = {}
+      @navigator = {}
+      flashDetect._injectNavigator(@navigator)
     afterEach ->
-      delete global.navigator
+      flashDetect._injectNavigator()
 
     it 'returns false when the navigator does not support specific mime types', ->
       expect(flashDetect()).to.be.false
 
     it 'returns false when the navigator does not support application/x-shockwave-flash', ->
-      navigator.mimeTypes = {}
+      @navigator.mimeTypes = {}
       expect(flashDetect()).to.be.false
 
     it 'returns false when the navigator supports application/x-shockwave-flash but there is no information', ->
-      navigator.mimeTypes = {}
-      navigator.mimeTypes['application/x-shockwave-flash'] = true
+      @navigator.mimeTypes = {}
+      @navigator.mimeTypes['application/x-shockwave-flash'] = true
       expect(flashDetect()).to.be.false
 
     it 'returns false when the navigator supports application/x-shockwave-flash but it is not enabled', ->
-      navigator.mimeTypes = {}
-      navigator.mimeTypes['application/x-shockwave-flash'] = {enabledPlugin: false}
+      @navigator.mimeTypes = {}
+      @navigator.mimeTypes['application/x-shockwave-flash'] = {enabledPlugin: false}
       expect(flashDetect()).to.be.false
 
     it 'returns true when the navigator supports application/x-shockwave-flash', ->
-      navigator.mimeTypes = {}
-      navigator.mimeTypes['application/x-shockwave-flash'] = {enabledPlugin: true}
+      @navigator.mimeTypes = {}
+      @navigator.mimeTypes['application/x-shockwave-flash'] = {enabledPlugin: true}
       expect(flashDetect()).to.be.true
-
-  it 'otherwise returns false', ->
-    expect(flashDetect()).to.be.false
