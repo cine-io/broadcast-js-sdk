@@ -47,13 +47,13 @@ describe 'PlayStream', ->
         console.log('checking type', playerDiv.type)
         playerExists = playerDiv.type == 'application/x-shockwave-flash'
         setTimeout callback
-      async.until testFunction, checkFunction, (err)=>
+      async.until testFunction, checkFunction, (err)->
         console.log("GOT ERROR", err)
         done(err)
 
     afterEach ->
       afterJwPlayer = document.getElementById("#{@playerDivID}_wrapper")
-      afterJwPlayer.parentNode.removeChild(afterJwPlayer);
+      afterJwPlayer.parentNode.removeChild(afterJwPlayer)
 
     it 'plays a live file', (done)->
       domId = @playerDivID
@@ -83,13 +83,13 @@ describe 'PlayStream', ->
       checkFunction = (callback)->
         playerExists = window.document.getElementById('player-id_media')?
         setTimeout callback
-      async.until testFunction, checkFunction, (err)=>
+      async.until testFunction, checkFunction, (err)->
         console.log("GOT ERROR", err)
         done(err)
 
     afterEach ->
       afterJwPlayer = document.getElementsByClassName('jwplayer')[0]
-      afterJwPlayer.parentNode.removeChild(afterJwPlayer);
+      afterJwPlayer.parentNode.removeChild(afterJwPlayer)
 
     it 'plays a recorded file', (done)->
       domId = @playerDivID
