@@ -59,6 +59,11 @@ describe 'ApiBridge', ->
           expect(@xhrStub.calledOnce).to.be.true
           done(err)
 
+      it 'makes a second ajax call when requested', (done)->
+        ApiBridge.getStreamDetails "THE_STREAM_ID", readFromCache: false, (err, response)=>
+          expect(@xhrStub.calledTwice).to.be.true
+          done(err)
+
       it 'returns the correct data in the second ajax call', (done)->
         ApiBridge.getStreamDetails "THE_STREAM_ID", (err, response)->
           expect(response).to.deep.equal
@@ -99,6 +104,11 @@ describe 'ApiBridge', ->
       it 'does not make a second ajax call', (done)->
         ApiBridge.nearestServer (err, response)=>
           expect(@xhrStub.calledOnce).to.be.true
+          done(err)
+
+      it 'makes a second ajax call when requested', (done)->
+        ApiBridge.nearestServer readFromCache: false, (err, response)=>
+          expect(@xhrStub.calledTwice).to.be.true
           done(err)
 
       it 'returns the correct data in the second ajax call', (done)->
@@ -167,6 +177,11 @@ describe 'ApiBridge', ->
       it 'does not make a second ajax call', (done)->
         ApiBridge.getStreamRecordings "THE_STREAM_ID", (err, response)=>
           expect(@xhrStub.calledOnce).to.be.true
+          done(err)
+
+      it 'makes a second ajax call when requested', (done)->
+        ApiBridge.getStreamRecordings "THE_STREAM_ID", readFromCache: false, (err, response)=>
+          expect(@xhrStub.calledTwice).to.be.true
           done(err)
 
       it 'returns the correct data in the second ajax call', (done)->

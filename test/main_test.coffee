@@ -148,4 +148,10 @@ describe 'CineIO', ->
           CineIO.getStreamRecordings("FAKE_STREAM_ID", "the callback")
           expect(@getStreamRecordingsStub.calledOnce).to.be.true
           args = @getStreamRecordingsStub.firstCall.args
-          expect(args).to.deep.equal(["FAKE_STREAM_ID", 'the callback'])
+          expect(args).to.deep.equal(["FAKE_STREAM_ID", 'the callback', undefined])
+
+        it 'calls to the ApiBridge with options', ->
+          CineIO.getStreamRecordings("FAKE_STREAM_ID", "the options", "the callback")
+          expect(@getStreamRecordingsStub.calledOnce).to.be.true
+          args = @getStreamRecordingsStub.firstCall.args
+          expect(args).to.deep.equal(["FAKE_STREAM_ID", "the options", 'the callback'])

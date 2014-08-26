@@ -30,14 +30,23 @@ module.exports = function(val){
 }
 
 },{}],2:[function(require,module,exports){
-var BASE_URL, Main, ajax, cachedResponses, fetchUrlWitCallback;
+var BASE_URL, Main, ajax, cachedResponses, fetchUrlWitCallback, hasOwnProperty;
 
 BASE_URL = "https://www.cine.io/api/1/-";
 
 cachedResponses = {};
 
-fetchUrlWitCallback = function(url, errorMessage, callback) {
-  if (cachedResponses[url]) {
+hasOwnProperty = Object.prototype.hasOwnProperty;
+
+fetchUrlWitCallback = function(url, errorMessage, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  if (!hasOwnProperty.call(options, 'readFromCache')) {
+    options.readFromCache = true;
+  }
+  if (options.readFromCache && cachedResponses[url]) {
     setTimeout(function() {
       return callback(null, cachedResponses[url]);
     });
@@ -57,25 +66,25 @@ fetchUrlWitCallback = function(url, errorMessage, callback) {
   return null;
 };
 
-exports.getStreamDetails = function(streamId, callback) {
+exports.getStreamDetails = function(streamId, options, callback) {
   var errorMessage, url;
   url = "" + BASE_URL + "/stream?publicKey=" + Main.config.publicKey + "&id=" + streamId;
   errorMessage = "Could not fetch stream " + streamId;
-  return fetchUrlWitCallback(url, errorMessage, callback);
+  return fetchUrlWitCallback(url, errorMessage, options, callback);
 };
 
-exports.nearestServer = function(callback) {
+exports.nearestServer = function(options, callback) {
   var errorMessage, url;
   url = "" + BASE_URL + "/nearest-server?default=ok";
   errorMessage = "Could not fetch nearest server";
-  return fetchUrlWitCallback(url, errorMessage, callback);
+  return fetchUrlWitCallback(url, errorMessage, options, callback);
 };
 
-exports.getStreamRecordings = function(streamId, callback) {
+exports.getStreamRecordings = function(streamId, options, callback) {
   var errorMessage, url;
   url = "" + BASE_URL + "/stream/recordings?publicKey=" + Main.config.publicKey + "&id=" + streamId;
   errorMessage = "Could not fetch stream recordings for " + streamId;
-  return fetchUrlWitCallback(url, errorMessage, callback);
+  return fetchUrlWitCallback(url, errorMessage, options, callback);
 };
 
 exports._clear = function() {
@@ -137,7 +146,7 @@ requiresInit = function() {
 };
 
 CineIO = {
-  version: "0.1.1",
+  version: "0.1.2",
   config: {},
   init: function(publicKey, options) {
     var prop, value, _results;
@@ -207,12 +216,12 @@ CineIO = {
     }
     return ApiBridge.getStreamDetails(streamId, callback);
   },
-  getStreamRecordings: function(streamId, callback) {
+  getStreamRecordings: function(streamId, options, callback) {
     requiresInit();
     if (!streamId) {
       throw new Error("Stream ID required.");
     }
-    return ApiBridge.getStreamRecordings(streamId, callback);
+    return ApiBridge.getStreamRecordings(streamId, options, callback);
   }
 };
 

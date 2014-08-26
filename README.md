@@ -150,6 +150,7 @@ This is used to get the details of the recording sessions of the stream.
 
 ```javascript
 CineIO.getStreamRecordings(streamId, callback);
+CineIO.getStreamRecordings(streamId, {readFromCache: false}, callback);
 ```
 
 **streamId**
