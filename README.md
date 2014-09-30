@@ -30,7 +30,10 @@ Options are an optional parameter. Currently the only supported option is `jwPla
 #### Play
 
 ```javascript
+CineIO.play(streamId, domId);
 CineIO.play(streamId, domId, playOptions);
+CineIO.play(streamId, domId, callback);
+CineIO.play(streamId, domId, playOptions, callback);
 ```
 
 **streamId**
@@ -53,6 +56,14 @@ domId is the ID of the dom node you want the player to be injected into.
 *  controls: true
 *  rtmp:
    * subscribe: true
+
+**callback**
+
+You can optionally pass a callback to retrieve the player. This will return any errors and instance of jwplayer in desktop environments or a video element tag.
+
+```javascript
+function(error, player) {console.log("player ready", error, player)}
+```
 
 #### Publish
 
@@ -89,7 +100,10 @@ domId is the ID of the dom node you want the publisher to be injected into.
 #### Play Recording
 
 ```javascript
+CineIO.playRecording(streamId, recordingName, domId);
 CineIO.playRecording(streamId, recordingName, domId, playOptions);
+CineIO.playRecording(streamId, recordingName, domId, callback);
+CineIO.playRecording(streamId, recordingName, domId, playOptions, callback);
 ```
 
 **streamId**
@@ -117,6 +131,14 @@ domId is the ID of the dom node you want the player to be injected into.
    * subscribe: true
 
 > the primary option is inconsistent for video-on-demand in jwplayer, so it has been removed from the jssdk.
+
+**callback**
+
+You can optionally pass a callback to retrieve the player. This will return any errors and instance of jwplayer in desktop environments or a video element tag in the absence of flash.
+
+```javascript
+function(error, player) {console.log("player ready", error, player)}
+```
 
 #### getStreamDetails
 
