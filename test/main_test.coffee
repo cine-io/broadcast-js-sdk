@@ -85,7 +85,43 @@ describe 'CineIO', ->
           CineIO.play("FAKE_STREAM_ID", 'fake-dom-id')
           expect(@playStub.calledOnce).to.be.true
           args = @playStub.firstCall.args
-          expect(args).to.deep.equal(["FAKE_STREAM_ID", 'fake-dom-id', {}])
+          expect(args).to.have.length(4)
+          expect(args[0]).to.equal("FAKE_STREAM_ID")
+          expect(args[1]).to.equal('fake-dom-id')
+          expect(args[2]).to.deep.equal({})
+          expect(args[3]).to.be.a("function")
+
+        it 'calls to PlayStream with options', ->
+          CineIO.play("FAKE_STREAM_ID", 'fake-dom-id', {hello: true})
+          expect(@playStub.calledOnce).to.be.true
+          args = @playStub.firstCall.args
+          expect(args).to.have.length(4)
+          expect(args[0]).to.equal("FAKE_STREAM_ID")
+          expect(args[1]).to.equal('fake-dom-id')
+          expect(args[2]).to.deep.equal({hello: true})
+          expect(args[3]).to.be.a("function")
+
+        it 'calls to PlayStream with a callback', ->
+          x = ->
+          CineIO.play("FAKE_STREAM_ID", 'fake-dom-id', x)
+          expect(@playStub.calledOnce).to.be.true
+          args = @playStub.firstCall.args
+          expect(args).to.have.length(4)
+          expect(args[0]).to.equal("FAKE_STREAM_ID")
+          expect(args[1]).to.equal('fake-dom-id')
+          expect(args[2]).to.deep.equal({})
+          expect(args[3]).to.equal(x)
+
+        it 'calls to PlayStream with options and a callback', ->
+          x = ->
+          CineIO.play("FAKE_STREAM_ID", 'fake-dom-id', {hello: true}, x)
+          expect(@playStub.calledOnce).to.be.true
+          args = @playStub.firstCall.args
+          expect(args).to.have.length(4)
+          expect(args[0]).to.equal("FAKE_STREAM_ID")
+          expect(args[1]).to.equal('fake-dom-id')
+          expect(args[2]).to.deep.equal({hello: true})
+          expect(args[3]).to.equal(x)
 
   describe '.playRecording', ->
     requiresInit('playRecording')
@@ -110,7 +146,47 @@ describe 'CineIO', ->
           CineIO.playRecording("FAKE_STREAM_ID", 'fakeRecording.mp4', 'fake-dom-id')
           expect(@playRecordingStub.calledOnce).to.be.true
           args = @playRecordingStub.firstCall.args
-          expect(args).to.deep.equal(["FAKE_STREAM_ID", 'fakeRecording.mp4', 'fake-dom-id', {}])
+          expect(args).to.have.length(5)
+          expect(args[0]).to.equal("FAKE_STREAM_ID")
+          expect(args[1]).to.equal('fakeRecording.mp4')
+          expect(args[2]).to.equal('fake-dom-id')
+          expect(args[3]).to.deep.equal({})
+          expect(args[4]).to.be.a("function")
+
+        it 'calls to PlayStream with options', ->
+          CineIO.playRecording("FAKE_STREAM_ID", 'fakeRecording.mp4', 'fake-dom-id', hello: true)
+          expect(@playRecordingStub.calledOnce).to.be.true
+          args = @playRecordingStub.firstCall.args
+          expect(args).to.have.length(5)
+          expect(args[0]).to.equal("FAKE_STREAM_ID")
+          expect(args[1]).to.equal('fakeRecording.mp4')
+          expect(args[2]).to.equal('fake-dom-id')
+          expect(args[3]).to.deep.equal({hello: true})
+          expect(args[4]).to.be.a("function")
+
+        it 'calls to PlayStream with a callback', ->
+          x = ->
+          CineIO.playRecording("FAKE_STREAM_ID", 'fakeRecording.mp4', 'fake-dom-id', x)
+          expect(@playRecordingStub.calledOnce).to.be.true
+          args = @playRecordingStub.firstCall.args
+          expect(args).to.have.length(5)
+          expect(args[0]).to.equal("FAKE_STREAM_ID")
+          expect(args[1]).to.equal('fakeRecording.mp4')
+          expect(args[2]).to.equal('fake-dom-id')
+          expect(args[3]).to.deep.equal({})
+          expect(args[4]).to.equal(x)
+
+        it 'calls to PlayStream with options and a callback', ->
+          x = ->
+          CineIO.playRecording("FAKE_STREAM_ID", 'fakeRecording.mp4', 'fake-dom-id', hello: true, x)
+          expect(@playRecordingStub.calledOnce).to.be.true
+          args = @playRecordingStub.firstCall.args
+          expect(args).to.have.length(5)
+          expect(args[0]).to.equal("FAKE_STREAM_ID")
+          expect(args[1]).to.equal('fakeRecording.mp4')
+          expect(args[2]).to.equal('fake-dom-id')
+          expect(args[3]).to.deep.equal({hello: true})
+          expect(args[4]).to.equal(x)
 
   describe '.getStreamDetails', ->
     requiresInit('getStreamDetails')

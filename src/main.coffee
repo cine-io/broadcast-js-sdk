@@ -1,5 +1,6 @@
 requiresInit = ->
   throw new Error("CineIO.init(CINE_IO_PUBLIC_KEY) has not been called.") unless CineIO.config.publicKey
+noop = ->
 
 CineIO =
   version: "0.1.3"
@@ -20,17 +21,24 @@ CineIO =
     throw new Error("DOM node required.") unless domNode
     PublishStream.new(streamId, password, domNode, publishOptions)
 
-  play: (streamId, domNode, playOptions={}, callback)->
+  play: (streamId, domNode, playOptions={}, callback=noop)->
     requiresInit()
     throw new Error("Stream ID required.") unless streamId
     throw new Error("DOM node required.") unless domNode
+    if typeof playOptions == 'function'
+      callback = playOptions
+      playOptions = {}
     PlayStream.live(streamId, domNode, playOptions, callback)
 
-  playRecording: (streamId, recordingName, domNode, playOptions={}, callback)->
+  playRecording: (streamId, recordingName, domNode, playOptions={}, callback=noop)->
     requiresInit()
     throw new Error("Stream ID required.") unless streamId
     throw new Error("Recording name required.") unless recordingName
     throw new Error("DOM node required.") unless domNode
+    if typeof playOptions == 'function'
+      callback = playOptions
+      playOptions = {}
+
     PlayStream.recording(streamId, recordingName, domNode, playOptions, callback)
 
   getStreamDetails: (streamId, callback)->

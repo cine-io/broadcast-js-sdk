@@ -137,13 +137,15 @@ module.exports._injectNavigator = function(nav) {
 
 
 },{}],4:[function(require,module,exports){
-var ApiBridge, CineIO, PlayStream, PublishStream, requiresInit;
+var ApiBridge, CineIO, PlayStream, PublishStream, noop, requiresInit;
 
 requiresInit = function() {
   if (!CineIO.config.publicKey) {
     throw new Error("CineIO.init(CINE_IO_PUBLIC_KEY) has not been called.");
   }
 };
+
+noop = function() {};
 
 CineIO = {
   version: "0.1.3",
@@ -184,6 +186,9 @@ CineIO = {
     if (playOptions == null) {
       playOptions = {};
     }
+    if (callback == null) {
+      callback = noop;
+    }
     requiresInit();
     if (!streamId) {
       throw new Error("Stream ID required.");
@@ -191,11 +196,18 @@ CineIO = {
     if (!domNode) {
       throw new Error("DOM node required.");
     }
+    if (typeof playOptions === 'function') {
+      callback = playOptions;
+      playOptions = {};
+    }
     return PlayStream.live(streamId, domNode, playOptions, callback);
   },
   playRecording: function(streamId, recordingName, domNode, playOptions, callback) {
     if (playOptions == null) {
       playOptions = {};
+    }
+    if (callback == null) {
+      callback = noop;
     }
     requiresInit();
     if (!streamId) {
@@ -206,6 +218,10 @@ CineIO = {
     }
     if (!domNode) {
       throw new Error("DOM node required.");
+    }
+    if (typeof playOptions === 'function') {
+      callback = playOptions;
+      playOptions = {};
     }
     return PlayStream.recording(streamId, recordingName, domNode, playOptions, callback);
   },
