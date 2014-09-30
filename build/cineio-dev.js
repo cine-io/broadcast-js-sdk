@@ -446,7 +446,8 @@ ApiBridge = require('./api_bridge');
 
 
 },{"./api_bridge":2,"./flash_detect":3,"./vendor/get_script":8}],6:[function(require,module,exports){
-var ApiBridge, DEFAULT_BASE_URL, PUBLISHER_NAME, PUBLISHER_URL, Publisher, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, publisherIsLoading, publisherIsReady, publisherReady, swfObjectCallbackToLoadPublisher, waitingPublishCalls,
+var ApiBridge, DEFAULT_BASE_URL, PUBLISHER_NAME, PUBLISHER_URL, Publisher, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, publisherIsLoading, publisherIsReady, publisherReady, swfObjectCallbackToLoadPublisher, userOrDefault, waitingPublishCalls,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __slice = [].slice;
 
 publisherReady = false;
@@ -476,7 +477,9 @@ defaultOptions = {
   keyFrameInterval: null,
   intervalSecs: 10,
   bandwidth: 1500,
-  videoQuality: 90
+  videoQuality: 90,
+  embedTimecode: true,
+  timecodeFrequency: 100
 };
 
 loadPublisher = function(domNode, publishOptions, publishReadyCallback) {
@@ -552,6 +555,14 @@ publisherIsLoading = function(domNode) {
   return waitingPublishCalls[domNode] != null;
 };
 
+userOrDefault = function(userOptions, key) {
+  if (Object.prototype.hasOwnProperty.call(userOptions, key)) {
+    return userOptions[key];
+  } else {
+    return defaultOptions[key];
+  }
+};
+
 getPublisher = function(domNode, publishOptions, cb) {
   var publisher;
   publisher = findPublisherInDom(domNode);
@@ -582,6 +593,7 @@ Publisher = (function() {
     if (callback == null) {
       callback = noop;
     }
+    this._options = __bind(this._options, this);
     if (typeof this.publishOptions === 'function') {
       callback = publishOptions;
       this.publishOptions = {};
@@ -598,6 +610,7 @@ Publisher = (function() {
         return ApiBridge.getStreamDetails(_this.streamId, function(err, stream) {
           var options;
           options = _this._options(stream);
+          console.log("SET OPTIONS", options);
           publisher.setOptions(options);
           publisher.start();
           return callback();
@@ -622,19 +635,38 @@ Publisher = (function() {
     });
   };
 
+  Publisher.prototype.sendData = function(data, callback) {
+    if (callback == null) {
+      callback = noop;
+    }
+    return this._ensureLoaded(function(publisher) {
+      var e, response;
+      response = null;
+      try {
+        response = publisher.sendData(data);
+      } catch (_error) {
+        e = _error;
+        return callback(e);
+      }
+      return callback(null, response);
+    });
+  };
+
   Publisher.prototype._options = function(stream) {
     var intervalSecs, options;
     options = {
       serverURL: this.serverURL || DEFAULT_BASE_URL,
       streamName: generateStreamName(stream, this.password),
-      audioCodec: this.publishOptions.audioCodec || defaultOptions.audioCodec,
-      streamWidth: this.publishOptions.streamWidth || defaultOptions.streamWidth,
-      streamHeight: this.publishOptions.streamHeight || defaultOptions.streamHeight,
-      streamFPS: this.publishOptions.streamFPS || defaultOptions.streamFPS,
-      bandwidth: this.publishOptions.bandwidth || defaultOptions.bandwidth * 1024 * 8,
-      videoQuality: this.publishOptions.videoQuality || defaultOptions.videoQuality
+      audioCodec: userOrDefault(this.publishOptions, "audioCodec"),
+      streamWidth: userOrDefault(this.publishOptions, "streamWidth"),
+      streamHeight: userOrDefault(this.publishOptions, "streamHeight"),
+      streamFPS: userOrDefault(this.publishOptions, "streamFPS"),
+      bandwidth: userOrDefault(this.publishOptions, "bandwidth"),
+      videoQuality: userOrDefault(this.publishOptions, "videoQuality"),
+      embedTimecode: userOrDefault(this.publishOptions, "embedTimecode"),
+      timecodeFrequency: userOrDefault(this.publishOptions, "timecodeFrequency")
     };
-    intervalSecs = this.publishOptions.intervalSecs || defaultOptions.intervalSecs;
+    intervalSecs = userOrDefault(this.publishOptions, "intervalSecs");
     options.keyFrameInterval = options.streamFPS * intervalSecs;
     return options;
   };
