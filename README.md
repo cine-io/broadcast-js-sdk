@@ -1,4 +1,4 @@
-# [cine.io](cine.io) JS SDK
+# [cine.io](https://www.cine.io) JS SDK
 
 [![Build Status](https://travis-ci.org/cine-io/js-sdk.svg?branch=master)](https://travis-ci.org/cine-io/js-sdk)
 
@@ -21,7 +21,7 @@ Start off by initializing CineIO with your public publicKey.
 CineIO.init(CINE_IO_PUBLIC_KEY, options);
 ```
 **CINE_IO_PUBLIC_KEY**
-This is your public key for a [cine.io](cine.io) project.
+This is your public key for a [cine.io](https://www.cine.io) project.
 
 **options**
 
@@ -38,7 +38,7 @@ CineIO.play(streamId, domId, playOptions, callback);
 
 **streamId**
 
-streamId is a [cine.io](cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](cine.io) dashboard.
+streamId is a [cine.io](https://www.cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](https://www.cine.io) dashboard.
 
 **domId**
 
@@ -70,16 +70,17 @@ function(error, player) {console.log("player ready", error, player)}
 ```javascript
 publisher = CineIO.publish(streamId, streamPassword, domId, publishOptions);
 publisher.start(); // starts the broadcast
+publisher.sendData({some: "custom", data: true}) // send custom data over the data channel.
 publisher.stop(); // stops the broadcast
 ```
 
 **streamId**
 
-streamId is a [cine.io](cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](cine.io) dashboard.
+streamId is a [cine.io](https://www.cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](https://www.cine.io) dashboard.
 
 **streamPassword**
 
-streamPassword is a [cine.io](cine.io) stream password. Only expose the streamPassword to your users who have permission to publish.
+streamPassword is a [cine.io](https://www.cine.io) stream password. Only expose the streamPassword to your users who have permission to publish.
 
 **domId**
 
@@ -87,15 +88,18 @@ domId is the ID of the dom node you want the publisher to be injected into.
 
 **available/default publish options are:**
 
-
 *  audioCodec: 'NellyMoser'
-   * available options are 'NellyMoser' and 'Speex' (these are both automatically transcoded by [cine.io](cine.io) to AAC for playback on mobile devices.)
+   * available options are 'NellyMoser' and 'Speex' (these are both automatically transcoded by [cine.io](https://www.cine.io) to AAC for playback on mobile devices.)
 *  streamWidth: 720
 *  streamHeight: 404
 *  streamFPS: 15
 *  intervalSecs: 10
 *  bandwidth: 1500
 *  videoQuality: 90
+*  embedTimecode: true
+    * this sends the timecode (offset since start of recording) and timestamp (milliseconds since epoch) over the data channel.
+*  timecodeFrequency: 100
+    * how frequenently to send the timestamp. value of 100 means 10 every second.
 
 #### Play Recording
 
@@ -108,11 +112,11 @@ CineIO.playRecording(streamId, recordingName, domId, playOptions, callback);
 
 **streamId**
 
-streamId is a [cine.io](cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](cine.io) dashboard.
+streamId is a [cine.io](https://www.cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](https://www.cine.io) dashboard.
 
 **recordingName**
 
-recordingName is a [cine.io](cine.io) stream recording name. This is `name` field of one of the recordings when accessing the stream recordings.
+recordingName is a [cine.io](https://www.cine.io) stream recording name. This is `name` field of one of the recordings when accessing the stream recordings.
 
 **domId**
 
@@ -150,7 +154,7 @@ CineIO.getStreamDetails(streamId, callback);
 
 **streamId**
 
-streamId is a [cine.io](cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](cine.io) dashboard.
+streamId is a [cine.io](https://www.cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](https://www.cine.io) dashboard.
 
 **callback**
 
@@ -177,7 +181,7 @@ CineIO.getStreamRecordings(streamId, {readFromCache: false}, callback);
 
 **streamId**
 
-streamId is a [cine.io](cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](cine.io) dashboard.
+streamId is a [cine.io](https://www.cine.io) stream id. This is what is returned when accessing the create stream endpoint or available in your [cine.io](https://www.cine.io) dashboard.
 
 **callback**
 
