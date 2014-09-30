@@ -146,7 +146,7 @@ requiresInit = function() {
 };
 
 CineIO = {
-  version: "0.1.2",
+  version: "0.1.3",
   config: {},
   init: function(publicKey, options) {
     var prop, value, _results;

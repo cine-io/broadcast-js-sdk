@@ -2,7 +2,7 @@ requiresInit = ->
   throw new Error("CineIO.init(CINE_IO_PUBLIC_KEY) has not been called.") unless CineIO.config.publicKey
 
 CineIO =
-  version: "0.1.2"
+  version: "0.1.3"
   config: {}
   init: (publicKey, options)->
     throw new Error("Public Key required") unless publicKey
