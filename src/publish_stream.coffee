@@ -115,11 +115,11 @@ class Publisher
 
   start: (callback=noop)->
     @_ensureLoaded (publisher)=>
-      console.log('fetching stream', publisher)
+      # console.log('fetching stream', publisher)
       ApiBridge.getStreamDetails @streamId, (err, stream)=>
         options = @_options(stream)
-        console.log('streamingggg!!', options)
-        console.log("SET OPTIONS", publisher.setOptions)
+        # console.log('streamingggg!!', options)
+        # console.log("SET OPTIONS", publisher.setOptions)
         publisher.setOptions options
         publisher.start()
         callback()

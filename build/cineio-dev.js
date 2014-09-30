@@ -180,7 +180,7 @@ CineIO = {
     }
     return PublishStream["new"](streamId, password, domNode, publishOptions);
   },
-  play: function(streamId, domNode, playOptions) {
+  play: function(streamId, domNode, playOptions, callback) {
     if (playOptions == null) {
       playOptions = {};
     }
@@ -191,9 +191,9 @@ CineIO = {
     if (!domNode) {
       throw new Error("DOM node required.");
     }
-    return PlayStream.live(streamId, domNode, playOptions);
+    return PlayStream.live(streamId, domNode, playOptions, callback);
   },
-  playRecording: function(streamId, recordingName, domNode, playOptions) {
+  playRecording: function(streamId, recordingName, domNode, playOptions, callback) {
     if (playOptions == null) {
       playOptions = {};
     }
@@ -207,7 +207,7 @@ CineIO = {
     if (!domNode) {
       throw new Error("DOM node required.");
     }
-    return PlayStream.recording(streamId, recordingName, domNode, playOptions);
+    return PlayStream.recording(streamId, recordingName, domNode, playOptions, callback);
   },
   getStreamDetails: function(streamId, callback) {
     requiresInit();
@@ -240,13 +240,15 @@ ApiBridge = require('./api_bridge');
 
 
 },{"./api_bridge":2,"./play_stream":5,"./publish_stream":6}],5:[function(require,module,exports){
-var ApiBridge, defaultOptions, enqueuePlayerCallback, ensurePlayerLoaded, flashDetect, getRecordingUrl, getScript, jwPlayerUrl, loadingPlayer, playLive, playNative, playRecording, playerIsReady, playerReady, startJWPlayer, userOrDefault, waitingPlayCalls;
+var ApiBridge, defaultOptions, enqueuePlayerCallback, ensurePlayerLoaded, flashDetect, getRecordingUrl, getScript, jwPlayerUrl, loadingPlayer, noop, playLive, playNative, playRecording, playerIsReady, playerReady, startJWPlayer, userOrDefault, waitingPlayCalls;
 
 playerReady = false;
 
 loadingPlayer = false;
 
 waitingPlayCalls = [];
+
+noop = function() {};
 
 defaultOptions = {
   stretching: 'uniform',
@@ -303,8 +305,8 @@ userOrDefault = function(userOptions, key) {
   }
 };
 
-playNative = function(source, domNode, playOptions) {
-  var videoElement, videoOptions;
+playNative = function(source, domNode, playOptions, callback) {
+  var videoElement, videoNode, videoOptions;
   videoOptions = {
     width: userOrDefault(playOptions, 'width'),
     height: '100%',
@@ -314,17 +316,13 @@ playNative = function(source, domNode, playOptions) {
     src: source
   };
   videoElement = "<video src='" + videoOptions.src + "' height='" + videoOptions.height + "' " + (videoOptions.autoplay ? 'autoplay' : void 0) + " " + (videoOptions.controls ? 'controls' : void 0) + " " + (videoOptions.mute ? 'mute' : void 0) + ">";
-  return document.getElementById(domNode).innerHTML = videoElement;
+  videoNode = document.getElementById(domNode);
+  videoNode.innerHTML = videoElement;
+  return callback(null, videoNode);
 };
 
-startJWPlayer = function(flashSource, nativeSouce, domNode, playOptions) {
-  var options, switchToNative;
-  switchToNative = function() {
-    if (flashDetect()) {
-      return;
-    }
-    return playNative(nativeSouce, domNode, playOptions);
-  };
+startJWPlayer = function(flashSource, nativeSouce, domNode, playOptions, callback) {
+  var options, player, switchToNative;
   jwplayer.key = CineIO.config.jwPlayerKey;
   options = {
     file: flashSource,
@@ -339,18 +337,29 @@ startJWPlayer = function(flashSource, nativeSouce, domNode, playOptions) {
     controlbar: userOrDefault(playOptions, 'controls')
   };
   console.log('playing', options);
-  jwplayer(domNode).setup(options);
+  player = jwplayer(domNode).setup(options);
   if (!userOrDefault(playOptions, 'controls')) {
-    jwplayer().setControls(false);
+    player.setControls(false);
   }
-  jwplayer().onReady(switchToNative);
-  return jwplayer().onSetupError(switchToNative);
+  switchToNative = function() {
+    if (flashDetect()) {
+      return callback(null, player);
+    }
+    return playNative(nativeSouce, domNode, playOptions, callback);
+  };
+  player.onReady(switchToNative);
+  return player.onSetupError(switchToNative);
 };
 
-playLive = function(streamId, domNode, playOptions) {
+playLive = function(streamId, domNode, playOptions, callback) {
   return ApiBridge.getStreamDetails(streamId, function(err, stream) {
-    console.log('streaming', stream);
-    return startJWPlayer(stream.play.rtmp, stream.play.hls, domNode, playOptions);
+    if (err) {
+      return callback(err);
+    }
+    if (!stream) {
+      return callback(new Error("stream not found"));
+    }
+    return startJWPlayer(stream.play.rtmp, stream.play.hls, domNode, playOptions, callback);
   });
 };
 
@@ -365,33 +374,50 @@ getRecordingUrl = function(recordings, recordingName) {
   }
 };
 
-playRecording = function(streamId, recordingName, domNode, playOptions) {
+playRecording = function(streamId, recordingName, domNode, playOptions, callback) {
   return ApiBridge.getStreamRecordings(streamId, function(err, recordings) {
     var recordingUrl;
     recordingUrl = getRecordingUrl(recordings, recordingName);
+    if (err) {
+      return callback(err);
+    }
     if (!recordingUrl) {
-      throw new Error("Recording not found");
+      return callback(new Error("Recording not found"));
     }
     playOptions.primary = null;
-    return startJWPlayer(recordingUrl, recordingUrl, domNode, playOptions);
+    return startJWPlayer(recordingUrl, recordingUrl, domNode, playOptions, callback);
   });
 };
 
-exports.live = function(streamId, domNode, playOptions) {
+exports.live = function(streamId, domNode, playOptions, callback) {
   if (playOptions == null) {
     playOptions = {};
   }
+  if (callback == null) {
+    callback = noop;
+  }
   return ensurePlayerLoaded(function() {
-    return playLive(streamId, domNode, playOptions);
+    if (typeof playOptions === 'function') {
+      callback = playOptions;
+      playOptions = {};
+    }
+    return playLive(streamId, domNode, playOptions, callback);
   });
 };
 
-exports.recording = function(streamId, recordingName, domNode, playOptions) {
+exports.recording = function(streamId, recordingName, domNode, playOptions, callback) {
   if (playOptions == null) {
     playOptions = {};
   }
+  if (callback == null) {
+    callback = noop;
+  }
   return ensurePlayerLoaded(function() {
-    return playRecording(streamId, recordingName, domNode, playOptions);
+    if (typeof playOptions === 'function') {
+      callback = playOptions;
+      playOptions = {};
+    }
+    return playRecording(streamId, recordingName, domNode, playOptions, callback);
   });
 };
 
@@ -553,12 +579,9 @@ Publisher = (function() {
     }
     return this._ensureLoaded((function(_this) {
       return function(publisher) {
-        console.log('fetching stream', publisher);
         return ApiBridge.getStreamDetails(_this.streamId, function(err, stream) {
           var options;
           options = _this._options(stream);
-          console.log('streamingggg!!', options);
-          console.log("SET OPTIONS", publisher.setOptions);
           publisher.setOptions(options);
           publisher.start();
           return callback();

@@ -20,18 +20,18 @@ CineIO =
     throw new Error("DOM node required.") unless domNode
     PublishStream.new(streamId, password, domNode, publishOptions)
 
-  play: (streamId, domNode, playOptions={})->
+  play: (streamId, domNode, playOptions={}, callback)->
     requiresInit()
     throw new Error("Stream ID required.") unless streamId
     throw new Error("DOM node required.") unless domNode
-    PlayStream.live(streamId, domNode, playOptions)
+    PlayStream.live(streamId, domNode, playOptions, callback)
 
-  playRecording: (streamId, recordingName, domNode, playOptions={})->
+  playRecording: (streamId, recordingName, domNode, playOptions={}, callback)->
     requiresInit()
     throw new Error("Stream ID required.") unless streamId
     throw new Error("Recording name required.") unless recordingName
     throw new Error("DOM node required.") unless domNode
-    PlayStream.recording(streamId, recordingName, domNode, playOptions)
+    PlayStream.recording(streamId, recordingName, domNode, playOptions, callback)
 
   getStreamDetails: (streamId, callback)->
     requiresInit()

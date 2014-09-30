@@ -10,6 +10,8 @@ describe 'PlayStream', ->
     it 'needs to be checked in the browser'
     return
 
+  @timeout 5000
+
   beforeEach ->
     CineIO.init("MY_PUBLIC_KEY")
 
@@ -60,6 +62,16 @@ describe 'PlayStream', ->
       PlayStream.live streamId, domId
       checkForPlayer(done)
 
+    it 'calls back with jwplayer', (done)->
+      domId = @playerDivID
+      streamId = "theStreamId"
+      PlayStream.live streamId, domId, (err, player)->
+        expect(err).to.be.null
+        expect(player.id).to.equal('player-id')
+        expect(player.renderingMode).to.equal('flash')
+        expect(player.onMeta).to.be.a("function")
+        checkForPlayer(done)
+
   describe '.recording', ->
     beforeEach ->
       successfulResponse =
@@ -95,3 +107,12 @@ describe 'PlayStream', ->
       streamId = "theStreamId"
       PlayStream.recording streamId, "recordedFile.mp4", domId
       checkForPlayer(done)
+
+    it 'calls back with jwplayer', (done)->
+      domId = @playerDivID
+      streamId = "theStreamId"
+      PlayStream.recording streamId, "recordedFile.mp4", domId, (err, player)->
+        expect(err).to.be.null
+        expect(player.id).to.equal('player-id')
+        expect(player.onMeta).to.be.a("function")
+        checkForPlayer(done)

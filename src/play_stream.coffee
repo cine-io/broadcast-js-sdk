@@ -1,6 +1,7 @@
 playerReady = false
 loadingPlayer = false
 waitingPlayCalls = []
+noop = ->
 
 defaultOptions =
   stretching: 'uniform'
@@ -40,7 +41,7 @@ userOrDefault = (userOptions, key)->
   if Object.prototype.hasOwnProperty.call(userOptions, key) then userOptions[key] else defaultOptions[key]
 
 
-playNative = (source, domNode, playOptions)->
+playNative = (source, domNode, playOptions, callback)->
   videoOptions =
      width: userOrDefault(playOptions, 'width')
      height: '100%'
@@ -49,13 +50,11 @@ playNative = (source, domNode, playOptions)->
      mute: userOrDefault(playOptions, 'mute')
      src: source
   videoElement = "<video src='#{videoOptions.src}' height='#{videoOptions.height}' #{'autoplay' if videoOptions.autoplay} #{'controls' if videoOptions.controls} #{'mute' if videoOptions.mute}>"
-  document.getElementById(domNode).innerHTML = videoElement
+  videoNode = document.getElementById(domNode)
+  videoNode.innerHTML = videoElement
+  callback(null, videoNode)
 
-startJWPlayer = (flashSource, nativeSouce, domNode, playOptions)->
-  switchToNative = ->
-    return if flashDetect()
-    playNative(nativeSouce, domNode, playOptions)
-
+startJWPlayer = (flashSource, nativeSouce, domNode, playOptions, callback)->
   jwplayer.key = CineIO.config.jwPlayerKey
   options =
     file: flashSource
@@ -71,38 +70,51 @@ startJWPlayer = (flashSource, nativeSouce, domNode, playOptions)->
 
   console.log('playing', options)
 
-  jwplayer(domNode).setup(options)
-  jwplayer().setControls(false) if !userOrDefault(playOptions, 'controls')
+  player = jwplayer(domNode).setup(options)
+  player.setControls(false) if !userOrDefault(playOptions, 'controls')
 
-  jwplayer().onReady switchToNative
-  jwplayer().onSetupError switchToNative
+  switchToNative = ->
+    return callback(null, player) if flashDetect()
+    playNative(nativeSouce, domNode, playOptions, callback)
+
+  player.onReady switchToNative
+  player.onSetupError switchToNative
 
 # this assumes JW player is loaded
-playLive = (streamId, domNode, playOptions)->
+playLive = (streamId, domNode, playOptions, callback)->
   ApiBridge.getStreamDetails streamId, (err, stream)->
-    console.log('streaming', stream)
-    startJWPlayer(stream.play.rtmp, stream.play.hls, domNode, playOptions)
+    return callback(err) if err
+    return callback(new Error("stream not found")) unless stream
+    startJWPlayer(stream.play.rtmp, stream.play.hls, domNode, playOptions, callback)
 
 getRecordingUrl = (recordings, recordingName)->
   url = null
   for recording in recordings
     return recording.url if recording.name == recordingName
 
-playRecording = (streamId, recordingName, domNode, playOptions)->
+playRecording = (streamId, recordingName, domNode, playOptions, callback)->
   ApiBridge.getStreamRecordings streamId, (err, recordings)->
     recordingUrl = getRecordingUrl(recordings, recordingName)
-    throw new Error("Recording not found") unless recordingUrl
+    return callback(err) if err
+    return callback(new Error("Recording not found")) unless recordingUrl
     # JWPlayer totally fails when primary is set to flash.
     playOptions.primary = null
-    startJWPlayer(recordingUrl, recordingUrl, domNode, playOptions)
+    startJWPlayer(recordingUrl, recordingUrl, domNode, playOptions, callback)
 
-exports.live = (streamId, domNode, playOptions={})->
+exports.live = (streamId, domNode, playOptions={}, callback=noop)->
   ensurePlayerLoaded ->
-    playLive(streamId, domNode, playOptions)
+    if typeof playOptions == 'function'
+      callback = playOptions
+      playOptions = {}
 
-exports.recording = (streamId, recordingName, domNode, playOptions={})->
+    playLive(streamId, domNode, playOptions, callback)
+
+exports.recording = (streamId, recordingName, domNode, playOptions={}, callback=noop)->
   ensurePlayerLoaded ->
-    playRecording(streamId, recordingName, domNode, playOptions)
+    if typeof playOptions == 'function'
+      callback = playOptions
+      playOptions = {}
+    playRecording(streamId, recordingName, domNode, playOptions, callback)
 
 getScript = require('./vendor/get_script')
 flashDetect = require('./flash_detect')
