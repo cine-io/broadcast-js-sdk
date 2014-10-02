@@ -19,6 +19,8 @@ defaultOptions =
   intervalSecs: 10 #not passed to publisher
   bandwidth: 1500
   videoQuality: 90
+  embedTimecode: true
+  timecodeFrequency: 100
 
 loadPublisher = (domNode, publishOptions, publishReadyCallback)->
   swfVersionStr = "11.4.0"
@@ -33,8 +35,8 @@ loadPublisher = (domNode, publishOptions, publishReadyCallback)->
   attributes.name = PUBLISHER_NAME
   attributes.align = "middle"
   domWidth = document.getElementById(domNode).offsetWidth
-  streamWidth = publishOptions.streamWidth || defaultOptions.streamWidth
-  streamHeight = publishOptions.streamHeight || defaultOptions.streamHeight
+  streamWidth = userOrDefault(publishOptions, 'streamWidth')
+  streamHeight = userOrDefault(publishOptions, 'streamHeight')
   height = domWidth / (streamWidth / streamHeight)
   url = "#{window.location.protocol}#{PUBLISHER_URL}"
   swfobject.embedSWF url, domNode, "100%", height, swfVersionStr, xiSwfUrlStr, flashvars, params, attributes, (embedEvent) ->
@@ -106,6 +108,10 @@ getPublisher = (domNode, publishOptions, cb)->
 generateStreamName = (stream, password)->
   "#{stream.streamName}?#{password}&adbe-live-event=#{stream.streamName}"
 
+
+userOrDefault = (userOptions, key)->
+  if Object.prototype.hasOwnProperty.call(userOptions, key) then userOptions[key] else defaultOptions[key]
+
 class Publisher
   constructor: (@streamId, @password, @domNode, @publishOptions={}, callback=noop)->
     if typeof @publishOptions == 'function'
@@ -132,7 +138,6 @@ class Publisher
         return callback(e)
       callback()
 
-
   sendData: (data, callback=noop)->
     @_ensureLoaded (publisher)->
       response = null
@@ -146,13 +151,15 @@ class Publisher
     options =
       serverURL: @serverURL || DEFAULT_BASE_URL
       streamName: generateStreamName(stream, @password)
-      audioCodec: @publishOptions.audioCodec || defaultOptions.audioCodec
-      streamWidth: @publishOptions.streamWidth || defaultOptions.streamWidth
-      streamHeight: @publishOptions.streamHeight || defaultOptions.streamHeight
-      streamFPS: @publishOptions.streamFPS || defaultOptions.streamFPS
-      bandwidth: @publishOptions.bandwidth || defaultOptions.bandwidth * 1024 * 8
-      videoQuality: @publishOptions.videoQuality || defaultOptions.videoQuality
-    intervalSecs = @publishOptions.intervalSecs || defaultOptions.intervalSecs
+      audioCodec: userOrDefault(@publishOptions, 'audioCodec')
+      streamWidth: userOrDefault(@publishOptions, 'streamWidth')
+      streamHeight: userOrDefault(@publishOptions, 'streamHeight')
+      streamFPS: userOrDefault(@publishOptions, 'streamFPS')
+      bandwidth: userOrDefault(@publishOptions, 'bandwidth') * 1024 * 8
+      videoQuality: userOrDefault(@publishOptions, 'videoQuality')
+      embedTimecode: userOrDefault(this.publishOptions, "embedTimecode"),
+      timecodeFrequency: userOrDefault(this.publishOptions, "timecodeFrequency")
+    intervalSecs = userOrDefault(@publishOptions, 'intervalSecs')
     options.keyFrameInterval = options.streamFPS * intervalSecs
     options
 
@@ -161,8 +168,8 @@ class Publisher
       @serverUrl = data.transcode
       getPublisher @domNode, @publishOptions, cb
 
-exports.new = (streamId, password, domNode, publishOptions={})->
-  new Publisher(streamId, password, domNode, publishOptions)
+exports.new = (streamId, password, domNode, publishOptions={}, callback=noop)->
+  new Publisher(streamId, password, domNode, publishOptions, callback)
 
 window._publisherEmit = (eventName, stuff...)->
   switch(eventName)
@@ -170,7 +177,6 @@ window._publisherEmit = (eventName, stuff...)->
       console.log(stuff...)
     else
       console.log(stuff...)
-
 
 window._jsLogFunction = (msg)->
   console.log('_jsLogFunction', msg)

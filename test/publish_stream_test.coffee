@@ -9,6 +9,7 @@ describe 'PublishStream', ->
   unless flashDetect()
     it 'needs to be checked in the browser'
     return
+  @timeout 10000
 
   publishDivNumber = 0
   beforeEach ->
@@ -67,7 +68,7 @@ describe 'PublishStream', ->
       playerExists = publisherDiv.type == 'application/x-shockwave-flash'
       setTimeout callback
     async.until testFunction, checkFunction, (err)->
-      console.log("GOT ERROR", err)
+      console.log("GOT ERROR", err) if err
       done(err)
 
   describe '.new', ->
@@ -82,7 +83,6 @@ describe 'PublishStream', ->
 
   describe '#start', ->
     it 'fetches the stream details and starts the publisher', (done)->
-      @timeout 5000
       domId = @publishDivID
       streamId = "theStreamId"
       password = "thePassword"
@@ -97,7 +97,6 @@ describe 'PublishStream', ->
 
   describe '#stop', ->
     it 'needs to be started', (done)->
-      @timeout 10000
       domId = @publishDivID
       streamId = "theStreamId"
       password = "thePassword"
@@ -107,7 +106,6 @@ describe 'PublishStream', ->
           done()
 
     it 'stops the publisher', (done)->
-      @timeout 10000
       domId = @publishDivID
       streamId = "theStreamId"
       password = "thePassword"
@@ -121,3 +119,58 @@ describe 'PublishStream', ->
               expect(err).to.be.undefined
               done()
           , 2000)
+
+  describe '_options', ->
+    createPublisher = (streamId, options, done)->
+      domId = @publishDivID
+      console.log(@publishDivID, options)
+      password = "thePassword"
+      PublishStream.new streamId, password, domId, options, =>
+        checkForPlayer.call(this, done)
+
+    checkForOptions = (givenOptions, expectedOptions, done)->
+      streamId = "theStreamId"
+      publisher = createPublisher.call this, streamId, givenOptions, (err)=>
+        expect(err).to.be.undefined
+        ApiBridge.getStreamDetails streamId, (err, stream)=>
+          expect(err).to.be.null
+          console.log(publisher._options(stream))
+          expect(publisher._options(stream)).to.deep.equal(expectedOptions)
+          checkForPlayer.call(this, done)
+
+    it 'generates the correct default options', (done)->
+      expectedOptions =
+        audioCodec: "NellyMoser"
+        bandwidth: 12288000
+        keyFrameInterval: 150
+        serverURL: "rtmp://publish-west.cine.io/live"
+        streamFPS: 15
+        streamHeight: 404
+        streamName: "streamName?thePassword&adbe-live-event=streamName"
+        streamWidth: 720
+        videoQuality: 90
+      givenOptions = {}
+      checkForOptions.call this, givenOptions, expectedOptions, done
+
+    it 'can overwrite default options', (done)->
+      expectedOptions =
+        audioCodec: "Speex"
+        bandwidth: 20480000
+        keyFrameInterval: 80
+        serverURL: "rtmp://publish-west.cine.io/live"
+        streamFPS: 20
+        streamHeight: 900
+        streamName: "streamName?thePassword&adbe-live-event=streamName"
+        streamWidth: 1600
+        videoQuality: 70
+
+      givenOptions =
+        audioCodec: 'Speex'
+        bandwidth: 2500
+        streamWidth: 1600
+        streamHeight: 900
+        streamFPS: 20
+        intervalSecs: 4
+        videoQuality: 70
+
+      checkForOptions.call this, givenOptions, expectedOptions, done

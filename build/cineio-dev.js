@@ -446,7 +446,7 @@ ApiBridge = require('./api_bridge');
 
 
 },{"./api_bridge":2,"./flash_detect":3,"./vendor/get_script":8}],6:[function(require,module,exports){
-var ApiBridge, DEFAULT_BASE_URL, PUBLISHER_NAME, PUBLISHER_URL, Publisher, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, publisherIsLoading, publisherIsReady, publisherReady, swfObjectCallbackToLoadPublisher, waitingPublishCalls,
+var ApiBridge, DEFAULT_BASE_URL, PUBLISHER_NAME, PUBLISHER_URL, Publisher, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, publisherIsLoading, publisherIsReady, publisherReady, swfObjectCallbackToLoadPublisher, userOrDefault, waitingPublishCalls,
   __slice = [].slice;
 
 publisherReady = false;
@@ -476,7 +476,9 @@ defaultOptions = {
   keyFrameInterval: null,
   intervalSecs: 10,
   bandwidth: 1500,
-  videoQuality: 90
+  videoQuality: 90,
+  embedTimecode: true,
+  timecodeFrequency: 100
 };
 
 loadPublisher = function(domNode, publishOptions, publishReadyCallback) {
@@ -493,8 +495,8 @@ loadPublisher = function(domNode, publishOptions, publishReadyCallback) {
   attributes.name = PUBLISHER_NAME;
   attributes.align = "middle";
   domWidth = document.getElementById(domNode).offsetWidth;
-  streamWidth = publishOptions.streamWidth || defaultOptions.streamWidth;
-  streamHeight = publishOptions.streamHeight || defaultOptions.streamHeight;
+  streamWidth = userOrDefault(publishOptions, 'streamWidth');
+  streamHeight = userOrDefault(publishOptions, 'streamHeight');
   height = domWidth / (streamWidth / streamHeight);
   url = "" + window.location.protocol + PUBLISHER_URL;
   return swfobject.embedSWF(url, domNode, "100%", height, swfVersionStr, xiSwfUrlStr, flashvars, params, attributes, function(embedEvent) {
@@ -573,6 +575,14 @@ generateStreamName = function(stream, password) {
   return "" + stream.streamName + "?" + password + "&adbe-live-event=" + stream.streamName;
 };
 
+userOrDefault = function(userOptions, key) {
+  if (Object.prototype.hasOwnProperty.call(userOptions, key)) {
+    return userOptions[key];
+  } else {
+    return defaultOptions[key];
+  }
+};
+
 Publisher = (function() {
   function Publisher(streamId, password, domNode, publishOptions, callback) {
     this.streamId = streamId;
@@ -644,14 +654,16 @@ Publisher = (function() {
     options = {
       serverURL: this.serverURL || DEFAULT_BASE_URL,
       streamName: generateStreamName(stream, this.password),
-      audioCodec: this.publishOptions.audioCodec || defaultOptions.audioCodec,
-      streamWidth: this.publishOptions.streamWidth || defaultOptions.streamWidth,
-      streamHeight: this.publishOptions.streamHeight || defaultOptions.streamHeight,
-      streamFPS: this.publishOptions.streamFPS || defaultOptions.streamFPS,
-      bandwidth: this.publishOptions.bandwidth || defaultOptions.bandwidth * 1024 * 8,
-      videoQuality: this.publishOptions.videoQuality || defaultOptions.videoQuality
+      audioCodec: userOrDefault(this.publishOptions, 'audioCodec'),
+      streamWidth: userOrDefault(this.publishOptions, 'streamWidth'),
+      streamHeight: userOrDefault(this.publishOptions, 'streamHeight'),
+      streamFPS: userOrDefault(this.publishOptions, 'streamFPS'),
+      bandwidth: userOrDefault(this.publishOptions, 'bandwidth') * 1024 * 8,
+      videoQuality: userOrDefault(this.publishOptions, 'videoQuality'),
+      embedTimecode: userOrDefault(this.publishOptions, "embedTimecode"),
+      timecodeFrequency: userOrDefault(this.publishOptions, "timecodeFrequency")
     };
-    intervalSecs = this.publishOptions.intervalSecs || defaultOptions.intervalSecs;
+    intervalSecs = userOrDefault(this.publishOptions, 'intervalSecs');
     options.keyFrameInterval = options.streamFPS * intervalSecs;
     return options;
   };
@@ -672,11 +684,14 @@ Publisher = (function() {
 
 })();
 
-exports["new"] = function(streamId, password, domNode, publishOptions) {
+exports["new"] = function(streamId, password, domNode, publishOptions, callback) {
   if (publishOptions == null) {
     publishOptions = {};
   }
-  return new Publisher(streamId, password, domNode, publishOptions);
+  if (callback == null) {
+    callback = noop;
+  }
+  return new Publisher(streamId, password, domNode, publishOptions, callback);
 };
 
 window._publisherEmit = function() {
