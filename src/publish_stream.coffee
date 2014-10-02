@@ -19,8 +19,6 @@ defaultOptions =
   intervalSecs: 10 #not passed to publisher
   bandwidth: 1500
   videoQuality: 90
-  embedTimecode: true
-  timecodeFrequency: 100
 
 loadPublisher = (domNode, publishOptions, publishReadyCallback)->
   swfVersionStr = "11.4.0"
@@ -73,10 +71,6 @@ swfObjectCallbackToLoadPublisher = (domNode, publishOptions)->
 publisherIsLoading = (domNode)->
   waitingPublishCalls[domNode]?
 
-
-userOrDefault = (userOptions, key)->
-  if Object.prototype.hasOwnProperty.call(userOptions, key) then userOptions[key] else defaultOptions[key]
-
 # cb(publisher)
 # Workflow:
 # Case 1: SWFObject not loaded
@@ -125,7 +119,7 @@ class Publisher
       ApiBridge.getStreamDetails @streamId, (err, stream)=>
         options = @_options(stream)
         # console.log('streamingggg!!', options)
-        console.log("SET OPTIONS", options)
+        # console.log("SET OPTIONS", publisher.setOptions)
         publisher.setOptions options
         publisher.start()
         callback()
@@ -138,28 +132,17 @@ class Publisher
         return callback(e)
       callback()
 
-  sendData: (data, callback=noop)->
-    @_ensureLoaded (publisher)->
-      response = null
-      try
-        response = publisher.sendData(data)
-      catch e
-        return callback(e)
-      callback(null, response)
-
-  _options: (stream)=>
+  _options: (stream)->
     options =
       serverURL: @serverURL || DEFAULT_BASE_URL
       streamName: generateStreamName(stream, @password)
-      audioCodec: userOrDefault @publishOptions, "audioCodec"
-      streamWidth: userOrDefault @publishOptions, "streamWidth"
-      streamHeight: userOrDefault @publishOptions, "streamHeight"
-      streamFPS: userOrDefault @publishOptions, "streamFPS"
-      bandwidth: userOrDefault @publishOptions, "bandwidth"
-      videoQuality: userOrDefault @publishOptions, "videoQuality"
-      embedTimecode: userOrDefault @publishOptions, "embedTimecode"
-      timecodeFrequency: userOrDefault @publishOptions, "timecodeFrequency"
-    intervalSecs = userOrDefault @publishOptions, "intervalSecs"
+      audioCodec: @publishOptions.audioCodec || defaultOptions.audioCodec
+      streamWidth: @publishOptions.streamWidth || defaultOptions.streamWidth
+      streamHeight: @publishOptions.streamHeight || defaultOptions.streamHeight
+      streamFPS: @publishOptions.streamFPS || defaultOptions.streamFPS
+      bandwidth: @publishOptions.bandwidth || defaultOptions.bandwidth * 1024 * 8
+      videoQuality: @publishOptions.videoQuality || defaultOptions.videoQuality
+    intervalSecs = @publishOptions.intervalSecs || defaultOptions.intervalSecs
     options.keyFrameInterval = options.streamFPS * intervalSecs
     options
 
