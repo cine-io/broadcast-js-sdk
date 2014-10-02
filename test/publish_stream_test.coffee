@@ -95,6 +95,33 @@ describe 'PublishStream', ->
             expect(@streamDetailsCalled).to.be.true
             done()
 
+  describe '#sendData', ->
+    it 'needs to be started', (done)->
+      domId = @publishDivID
+      streamId = "theStreamId"
+      password = "thePassword"
+      publisher = PublishStream.new streamId, password, domId, ->
+        publisher.sendData some: "data", (err, response)->
+          expect(err).to.be.null
+          expect(response).to.be.false
+          done()
+
+    it 'sends data over the data channel', (done)->
+      domId = @publishDivID
+      streamId = "theStreamId"
+      password = "thePassword"
+      publisher = PublishStream.new streamId, password, domId, ->
+        publisher.start ->
+          # we don't have a way yet, to verify that the publisher
+          # has successfully started
+          # if it hasn't started in 2 seconds, assume failure
+          setTimeout(->
+            publisher.sendData some: "data", (err, response)->
+              expect(err).to.be.null
+              expect(response).to.be.true
+              done()
+          , 2000)
+
   describe '#stop', ->
     it 'needs to be started', (done)->
       domId = @publishDivID
