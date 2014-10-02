@@ -95,11 +95,13 @@ domId is the ID of the dom node you want the publisher to be injected into.
 *  streamFPS: 15
 *  intervalSecs: 10
 *  bandwidth: 1500
+    * Maximum bandwidth to be used. Default is 1500 kb/s. Adobe documentation [here](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/media/Camera.html#setQuality()).
 *  videoQuality: 90
+    * Level of picture quality. 100 indicates no compression. Adobe documentation [here](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/media/Camera.html#setQuality()).
 *  embedTimecode: true
-    * this sends the timecode (offset since start of recording) and timestamp (milliseconds since epoch) over the data channel.
+    * This sends the timecode (offset since start of recording) and timestamp (milliseconds since epoch) over the data channel.
 *  timecodeFrequency: 100
-    * how frequenently to send the timestamp. value of 100 means 10 every second.
+    * How frequenently to send the timestamp. value of 100 means 10 every second.
 
 #### Play Recording
 
