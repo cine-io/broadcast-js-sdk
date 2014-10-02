@@ -622,6 +622,23 @@ Publisher = (function() {
     });
   };
 
+  Publisher.prototype.sendData = function(data, callback) {
+    if (callback == null) {
+      callback = noop;
+    }
+    return this._ensureLoaded(function(publisher) {
+      var e, response;
+      response = null;
+      try {
+        response = publisher.sendData(data);
+      } catch (_error) {
+        e = _error;
+        return callback(e);
+      }
+      return callback(null, response);
+    });
+  };
+
   Publisher.prototype._options = function(stream) {
     var intervalSecs, options;
     options = {

@@ -132,6 +132,16 @@ class Publisher
         return callback(e)
       callback()
 
+
+  sendData: (data, callback=noop)->
+    @_ensureLoaded (publisher)->
+      response = null
+      try
+        response = publisher.sendData(data)
+      catch e
+        return callback(e)
+      callback(null, response)
+
   _options: (stream)->
     options =
       serverURL: @serverURL || DEFAULT_BASE_URL
