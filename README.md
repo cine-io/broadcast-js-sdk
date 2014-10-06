@@ -70,6 +70,10 @@ function(error, player) {console.log("player ready", error, player)}
 ```javascript
 publisher = CineIO.publish(streamId, streamPassword, domId, publishOptions);
 publisher.start(); // starts the broadcast
+publisher.preview() // show the video preview without broadcasting.
+publisher.getMediaInfo() // returns info about the media on the computer. Ex: {cameras: ["A webcam", …], microphones: ["Built in mic", "line in", …]}
+publisher.selectCamera() // shows a dialog to change the camera
+publisher.selectMicrophone() // shows a dialog to change the microphone
 publisher.sendData({some: "custom", data: true}) // send custom data over the data channel.
 publisher.stop(); // stops the broadcast
 ```
@@ -102,6 +106,21 @@ domId is the ID of the dom node you want the publisher to be injected into.
     * This sends the timecode (offset since start of recording) and timestamp (milliseconds since epoch) over the data channel.
 *  timecodeFrequency: 100
     * How frequenently to send the timestamp. value of 100 means 10 every second.
+*  eventHandler: function(event){}
+    * The publisher will send events, such as `status`, `connect`, `disconnect`, and `error`.
+    * events look like:
+
+      ```json
+        {"
+        kind"
+        : "the kind of event (status, connect,…)", "
+        code"
+        : 100, "
+        message"
+        : "message of event"}
+      ```
+
+    * the same kind of event can have different codes for different reasons. For example, a `disconnect` event might be fired at a closed connection (code 502), or a failed initial connection (code 501).
 
 #### Play Recording
 
