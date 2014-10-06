@@ -81,6 +81,90 @@ describe 'PublishStream', ->
         checkForPlayer.call(this, done)
 
 
+  describe 'eventHandler option', ->
+    it 'calls back to the eventHandler on publisher events', (done)->
+      domId = @publishDivID
+      streamId = "theStreamId"
+      password = "thePassword"
+      eventCalled = false
+      options =
+        eventHandler: (event)->
+          eventCalled = true
+
+      publisher = PublishStream.new streamId, password, domId, options, =>
+
+        publisher.start =>
+          checkForPlayer.call this, (err)=>
+            expect(err).to.be.undefined
+            expect(@nearestServerCalled).to.be.true
+            expect(@streamDetailsCalled).to.be.true
+
+            testFunction = -> eventCalled
+            checkFunction = setTimeout
+            async.until testFunction, checkFunction, done
+
+  describe '#preview', ->
+    it 'previews the publisher', (done)->
+      domId = @publishDivID
+      streamId = "theStreamId"
+      password = "thePassword"
+      publisher = PublishStream.new streamId, password, domId, =>
+
+        publisher.preview (err, response)=>
+          expect(err).to.be.undefined
+          checkForPlayer.call this, (err)=>
+            expect(err).to.be.undefined
+            expect(@nearestServerCalled).to.be.true
+            expect(@streamDetailsCalled).to.be.false
+            done()
+
+  describe '#getMediaInfo', ->
+    it 'fetches the media details', (done)->
+      domId = @publishDivID
+      streamId = "theStreamId"
+      password = "thePassword"
+      publisher = PublishStream.new streamId, password, domId, =>
+
+        publisher.getMediaInfo (err, response)=>
+          expect(err).to.be.null
+          expect(response['cameras']).to.have.length.of.at.least(1)
+          expect(response['microphones']).to.have.length.of.at.least(1)
+          checkForPlayer.call this, (err)=>
+            expect(err).to.be.undefined
+            expect(@nearestServerCalled).to.be.true
+            expect(@streamDetailsCalled).to.be.false
+            done()
+
+  describe '#selectMicrophone', ->
+    it 'shows the microphone selector', (done)->
+      domId = @publishDivID
+      streamId = "theStreamId"
+      password = "thePassword"
+      publisher = PublishStream.new streamId, password, domId, =>
+
+        publisher.selectMicrophone (err)=>
+          expect(err).to.be.null
+          checkForPlayer.call this, (err)=>
+            expect(err).to.be.undefined
+            expect(@nearestServerCalled).to.be.true
+            expect(@streamDetailsCalled).to.be.false
+            done()
+
+  describe '#selectCamera', ->
+    it 'shows the microphone selector', (done)->
+      domId = @publishDivID
+      streamId = "theStreamId"
+      password = "thePassword"
+      publisher = PublishStream.new streamId, password, domId, =>
+
+        publisher.selectCamera (err)=>
+          expect(err).to.be.null
+          checkForPlayer.call this, (err)=>
+            expect(err).to.be.undefined
+            expect(@nearestServerCalled).to.be.true
+            expect(@streamDetailsCalled).to.be.false
+            done()
+
   describe '#start', ->
     it 'fetches the stream details and starts the publisher', (done)->
       domId = @publishDivID
@@ -88,7 +172,8 @@ describe 'PublishStream', ->
       password = "thePassword"
       publisher = PublishStream.new streamId, password, domId, =>
 
-        publisher.start =>
+        publisher.start (err)=>
+          expect(err).to.be.undefined
           checkForPlayer.call this, (err)=>
             expect(err).to.be.undefined
             expect(@nearestServerCalled).to.be.true
@@ -123,15 +208,6 @@ describe 'PublishStream', ->
           , 2000)
 
   describe '#stop', ->
-    it 'needs to be started', (done)->
-      domId = @publishDivID
-      streamId = "theStreamId"
-      password = "thePassword"
-      publisher = PublishStream.new streamId, password, domId, ->
-        publisher.stop (err)->
-          expect(err.message).to.be.include('Error calling method')
-          done()
-
     it 'stops the publisher', (done)->
       domId = @publishDivID
       streamId = "theStreamId"
@@ -161,8 +237,10 @@ describe 'PublishStream', ->
         expect(err).to.be.undefined
         ApiBridge.getStreamDetails streamId, (err, stream)=>
           expect(err).to.be.null
-          console.log(publisher._options(stream))
-          expect(publisher._options(stream)).to.deep.equal(expectedOptions)
+          actualOptions = publisher._options(stream)
+          console.log("actual", actualOptions)
+          console.log("expected", expectedOptions)
+          expect(actualOptions).to.deep.equal(expectedOptions)
           checkForPlayer.call(this, done)
 
     it 'generates the correct default options', (done)->
@@ -176,6 +254,8 @@ describe 'PublishStream', ->
         streamName: "streamName?thePassword&adbe-live-event=streamName"
         streamWidth: 720
         videoQuality: 90
+        embedTimecode: true
+        timecodeFrequency: 100
       givenOptions = {}
       checkForOptions.call this, givenOptions, expectedOptions, done
 
@@ -190,6 +270,8 @@ describe 'PublishStream', ->
         streamName: "streamName?thePassword&adbe-live-event=streamName"
         streamWidth: 1600
         videoQuality: 70
+        embedTimecode: false
+        timecodeFrequency: 999
 
       givenOptions =
         audioCodec: 'Speex'
@@ -199,5 +281,7 @@ describe 'PublishStream', ->
         streamFPS: 20
         intervalSecs: 4
         videoQuality: 70
+        embedTimecode: false
+        timecodeFrequency: 999
 
       checkForOptions.call this, givenOptions, expectedOptions, done

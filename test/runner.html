@@ -21,14 +21,15 @@
     if (navigator.userAgent.indexOf('PhantomJS') < 0) {
       mocha.checkLeaks();
       var
-        myGlobals = ['ActiveXObject', '_publisherEmit', '_jsLogFunction', 'CineIO']
+        myGlobals = ['ActiveXObject', '_jsLogFunction', 'CineIO']
+        testSuitePublisherGlobals = [1,2,3,4,5,6,7,8,9,10,11,12].map(function(num){ return "_publisherEmit"+num})
       , jwPlayerGlobals = ['Base64', 'bd', 'i', 'bdn', 'jwplayer', 'console', '__flash_temp', 'blurredSwfId']
       , swfobject = ['swfobject']
       , publishGlobals = ['__flash__arrayToXML', '__flash__argumentsToXML', '__flash__objectToXML', '__flash__escapeXML', '__flash__toXML', '__flash__request']
       , flashGlobals = ['CLOSURE_NO_DEPS', '__flash_getWindowLocation', '__flash_getTopLocation']
       , youtubeGlobals = ['onYouTubeIframeAPIReady', 'YT', 'YTConfig', 'onYTReady', 'yt']
       , chromeDevTools = ['__InspectorOverlayPage_html']
-      , allGlobals = myGlobals.concat(jwPlayerGlobals).concat(publishGlobals).concat(flashGlobals).concat(youtubeGlobals).concat(swfobject).concat(chromeDevTools)
+      , allGlobals = myGlobals.concat(testSuitePublisherGlobals).concat(jwPlayerGlobals).concat(publishGlobals).concat(flashGlobals).concat(youtubeGlobals).concat(swfobject).concat(chromeDevTools)
       ;
       mocha.globals(allGlobals);
       mocha.run();

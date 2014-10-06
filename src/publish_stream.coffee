@@ -1,10 +1,11 @@
-publisherReady = false
 loadingSWF = false
 loadedSWF = false
 waitingPublishCalls = {}
 DEFAULT_BASE_URL = 'rtmp://publish-west.cine.io/live'
 PUBLISHER_NAME = 'Publisher'
 PUBLISHER_URL = '//cdn.cine.io/publisher.swf'
+numberOfPublishers = 0
+
 noop = ->
 
 defaultOptions =
@@ -42,14 +43,13 @@ loadPublisher = (domNode, publishOptions, publishReadyCallback)->
   swfobject.embedSWF url, domNode, "100%", height, swfVersionStr, xiSwfUrlStr, flashvars, params, attributes, (embedEvent) ->
     if embedEvent.success
       readyCall = ->
-        embedEvent.ref.setOptions(jsLogFunction: "_jsLogFunction", jsEmitFunction: "_publisherEmit")
+        embedEvent.ref.setOptions(jsLogFunction: "_jsLogFunction", jsEmitFunction: publishOptions._emitCallback)
         publisherIsReady(domNode)
       # need to wait a bit until initialization finishes
       setTimeout readyCall, 1000
 
 publisherIsReady = (domNode)->
-  console.log('publisher is ready!!!')
-  publisherReady = true
+  # console.log("publisher is ready")
   for call in waitingPublishCalls[domNode]
     call.call()
   delete waitingPublishCalls[domNode]
@@ -57,7 +57,6 @@ publisherIsReady = (domNode)->
 enqueuePublisherCallback = (domNode, publishOptions, cb)->
   waitingPublishCalls[domNode] ||= []
   waitingPublishCalls[domNode].push ->
-    console.log("HERE I AM")
     getPublisher domNode, publishOptions, cb
 
 findPublisherInDom = (domNode)->
@@ -118,11 +117,15 @@ class Publisher
       callback = publishOptions
       @publishOptions = {}
     @_ensureLoaded(callback)
+    numberOfPublishers+=1
+
+    @publishOptions._emitCallback = createGlobalCallback(this)
 
   start: (callback=noop)->
     @_ensureLoaded (publisher)=>
-      # console.log('fetching stream', publisher)
+      console.log('fetching stream', publisher)
       ApiBridge.getStreamDetails @streamId, (err, stream)=>
+        return callback(err) if err
         options = @_options(stream)
         # console.log('streamingggg!!', options)
         # console.log("SET OPTIONS", publisher.setOptions)
@@ -138,11 +141,46 @@ class Publisher
         return callback(e)
       callback()
 
+  preview: (callback=noop)->
+    @_ensureLoaded (publisher)->
+      try
+        publisher.preview()
+      catch e
+        return callback(e)
+      callback()
+
+  getMediaInfo: (callback=noop)->
+    @_ensureLoaded (publisher)->
+      response = null
+      try
+        response = publisher.getMediaInfo()
+      catch e
+        return callback(e)
+      callback(null, response)
+
   sendData: (data, callback=noop)->
     @_ensureLoaded (publisher)->
       response = null
       try
         response = publisher.sendData(data)
+      catch e
+        return callback(e)
+      callback(null, response)
+
+  selectMicrophone: (callback=noop)->
+    @_ensureLoaded (publisher)->
+      response = null
+      try
+        response = publisher.selectMicrophone()
+      catch e
+        return callback(e)
+      callback(null, response)
+
+  selectCamera: (callback=noop)->
+    @_ensureLoaded (publisher)->
+      response = null
+      try
+        response = publisher.selectCamera()
       catch e
         return callback(e)
       callback(null, response)
@@ -163,6 +201,10 @@ class Publisher
     options.keyFrameInterval = options.streamFPS * intervalSecs
     options
 
+  _eventHandler: (event)=>
+    if typeof @publishOptions.eventHandler == 'function'
+      @publishOptions.eventHandler(event)
+
   _ensureLoaded: (cb=noop)->
     ApiBridge.nearestServer (err, data)=>
       @serverUrl = data.transcode
@@ -171,12 +213,10 @@ class Publisher
 exports.new = (streamId, password, domNode, publishOptions={}, callback=noop)->
   new Publisher(streamId, password, domNode, publishOptions, callback)
 
-window._publisherEmit = (eventName, stuff...)->
-  switch(eventName)
-    when "connect", "disconnect", "publish", "status", "error"
-      console.log(stuff...)
-    else
-      console.log(stuff...)
+createGlobalCallback = (object)->
+  functionName = "_publisherEmit#{numberOfPublishers}"
+  window[functionName] = object._eventHandler
+  return functionName
 
 window._jsLogFunction = (msg)->
   console.log('_jsLogFunction', msg)

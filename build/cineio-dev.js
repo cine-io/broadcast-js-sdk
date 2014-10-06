@@ -446,10 +446,8 @@ ApiBridge = require('./api_bridge');
 
 
 },{"./api_bridge":2,"./flash_detect":3,"./vendor/get_script":8}],6:[function(require,module,exports){
-var ApiBridge, DEFAULT_BASE_URL, PUBLISHER_NAME, PUBLISHER_URL, Publisher, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, publisherIsLoading, publisherIsReady, publisherReady, swfObjectCallbackToLoadPublisher, userOrDefault, waitingPublishCalls,
-  __slice = [].slice;
-
-publisherReady = false;
+var ApiBridge, DEFAULT_BASE_URL, PUBLISHER_NAME, PUBLISHER_URL, Publisher, createGlobalCallback, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, numberOfPublishers, publisherIsLoading, publisherIsReady, swfObjectCallbackToLoadPublisher, userOrDefault, waitingPublishCalls,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 loadingSWF = false;
 
@@ -462,6 +460,8 @@ DEFAULT_BASE_URL = 'rtmp://publish-west.cine.io/live';
 PUBLISHER_NAME = 'Publisher';
 
 PUBLISHER_URL = '//cdn.cine.io/publisher.swf';
+
+numberOfPublishers = 0;
 
 noop = function() {};
 
@@ -505,7 +505,7 @@ loadPublisher = function(domNode, publishOptions, publishReadyCallback) {
       readyCall = function() {
         embedEvent.ref.setOptions({
           jsLogFunction: "_jsLogFunction",
-          jsEmitFunction: "_publisherEmit"
+          jsEmitFunction: publishOptions._emitCallback
         });
         return publisherIsReady(domNode);
       };
@@ -516,8 +516,6 @@ loadPublisher = function(domNode, publishOptions, publishReadyCallback) {
 
 publisherIsReady = function(domNode) {
   var call, _i, _len, _ref;
-  console.log('publisher is ready!!!');
-  publisherReady = true;
   _ref = waitingPublishCalls[domNode];
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     call = _ref[_i];
@@ -529,7 +527,6 @@ publisherIsReady = function(domNode) {
 enqueuePublisherCallback = function(domNode, publishOptions, cb) {
   waitingPublishCalls[domNode] || (waitingPublishCalls[domNode] = []);
   return waitingPublishCalls[domNode].push(function() {
-    console.log("HERE I AM");
     return getPublisher(domNode, publishOptions, cb);
   });
 };
@@ -592,11 +589,14 @@ Publisher = (function() {
     if (callback == null) {
       callback = noop;
     }
+    this._eventHandler = __bind(this._eventHandler, this);
     if (typeof this.publishOptions === 'function') {
       callback = publishOptions;
       this.publishOptions = {};
     }
     this._ensureLoaded(callback);
+    numberOfPublishers += 1;
+    this.publishOptions._emitCallback = createGlobalCallback(this);
   }
 
   Publisher.prototype.start = function(callback) {
@@ -605,8 +605,12 @@ Publisher = (function() {
     }
     return this._ensureLoaded((function(_this) {
       return function(publisher) {
+        console.log('fetching stream', publisher);
         return ApiBridge.getStreamDetails(_this.streamId, function(err, stream) {
           var options;
+          if (err) {
+            return callback(err);
+          }
           options = _this._options(stream);
           publisher.setOptions(options);
           publisher.start();
@@ -632,6 +636,39 @@ Publisher = (function() {
     });
   };
 
+  Publisher.prototype.preview = function(callback) {
+    if (callback == null) {
+      callback = noop;
+    }
+    return this._ensureLoaded(function(publisher) {
+      var e;
+      try {
+        publisher.preview();
+      } catch (_error) {
+        e = _error;
+        return callback(e);
+      }
+      return callback();
+    });
+  };
+
+  Publisher.prototype.getMediaInfo = function(callback) {
+    if (callback == null) {
+      callback = noop;
+    }
+    return this._ensureLoaded(function(publisher) {
+      var e, response;
+      response = null;
+      try {
+        response = publisher.getMediaInfo();
+      } catch (_error) {
+        e = _error;
+        return callback(e);
+      }
+      return callback(null, response);
+    });
+  };
+
   Publisher.prototype.sendData = function(data, callback) {
     if (callback == null) {
       callback = noop;
@@ -641,6 +678,40 @@ Publisher = (function() {
       response = null;
       try {
         response = publisher.sendData(data);
+      } catch (_error) {
+        e = _error;
+        return callback(e);
+      }
+      return callback(null, response);
+    });
+  };
+
+  Publisher.prototype.selectMicrophone = function(callback) {
+    if (callback == null) {
+      callback = noop;
+    }
+    return this._ensureLoaded(function(publisher) {
+      var e, response;
+      response = null;
+      try {
+        response = publisher.selectMicrophone();
+      } catch (_error) {
+        e = _error;
+        return callback(e);
+      }
+      return callback(null, response);
+    });
+  };
+
+  Publisher.prototype.selectCamera = function(callback) {
+    if (callback == null) {
+      callback = noop;
+    }
+    return this._ensureLoaded(function(publisher) {
+      var e, response;
+      response = null;
+      try {
+        response = publisher.selectCamera();
       } catch (_error) {
         e = _error;
         return callback(e);
@@ -666,6 +737,12 @@ Publisher = (function() {
     intervalSecs = userOrDefault(this.publishOptions, 'intervalSecs');
     options.keyFrameInterval = options.streamFPS * intervalSecs;
     return options;
+  };
+
+  Publisher.prototype._eventHandler = function(event) {
+    if (typeof this.publishOptions.eventHandler === 'function') {
+      return this.publishOptions.eventHandler(event);
+    }
   };
 
   Publisher.prototype._ensureLoaded = function(cb) {
@@ -694,19 +771,11 @@ exports["new"] = function(streamId, password, domNode, publishOptions, callback)
   return new Publisher(streamId, password, domNode, publishOptions, callback);
 };
 
-window._publisherEmit = function() {
-  var eventName, stuff;
-  eventName = arguments[0], stuff = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-  switch (eventName) {
-    case "connect":
-    case "disconnect":
-    case "publish":
-    case "status":
-    case "error":
-      return console.log.apply(console, stuff);
-    default:
-      return console.log.apply(console, stuff);
-  }
+createGlobalCallback = function(object) {
+  var functionName;
+  functionName = "_publisherEmit" + numberOfPublishers;
+  window[functionName] = object._eventHandler;
+  return functionName;
 };
 
 window._jsLogFunction = function(msg) {
