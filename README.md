@@ -97,7 +97,7 @@ domId is the ID of the dom node you want the publisher to be injected into.
 *  streamWidth: 720
 *  streamHeight: 404
 *  streamFPS: 15
-*  intervalSecs: 10
+*  intervalSecs: 3
 *  bandwidth: 1500
     * Maximum bandwidth to be used. Default is 1500 kb/s. Adobe documentation [here](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/media/Camera.html#setQuality()).
 *  videoQuality: 90

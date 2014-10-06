@@ -17,7 +17,7 @@ defaultOptions =
   streamHeight: 404
   streamFPS: 15
   keyFrameInterval: null
-  intervalSecs: 10 #not passed to publisher
+  intervalSecs: 3 #not passed to publisher
   bandwidth: 1500
   videoQuality: 90
   embedTimecode: true

@@ -474,7 +474,7 @@ defaultOptions = {
   streamHeight: 404,
   streamFPS: 15,
   keyFrameInterval: null,
-  intervalSecs: 10,
+  intervalSecs: 3,
   bandwidth: 1500,
   videoQuality: 90,
   embedTimecode: true,
