@@ -247,7 +247,7 @@ describe 'PublishStream', ->
       expectedOptions =
         audioCodec: "NellyMoser"
         bandwidth: 12288000
-        keyFrameInterval: 150
+        keyFrameInterval: 45
         serverURL: "rtmp://publish-west.cine.io/live"
         streamFPS: 15
         streamHeight: 404
@@ -255,7 +255,7 @@ describe 'PublishStream', ->
         streamWidth: 720
         videoQuality: 90
         embedTimecode: true
-        timecodeFrequency: 100
+        timecodeFrequency: 1000
       givenOptions = {}
       checkForOptions.call this, givenOptions, expectedOptions, done
 

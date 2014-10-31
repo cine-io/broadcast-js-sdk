@@ -21,7 +21,7 @@ defaultOptions =
   bandwidth: 1500
   videoQuality: 90
   embedTimecode: true
-  timecodeFrequency: 100
+  timecodeFrequency: 1000
 
 loadPublisher = (domNode, publishOptions, publishReadyCallback)->
   swfVersionStr = "11.4.0"

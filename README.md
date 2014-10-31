@@ -104,8 +104,8 @@ domId is the ID of the dom node you want the publisher to be injected into.
     * Level of picture quality. 100 indicates no compression. Adobe documentation [here](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/media/Camera.html#setQuality()).
 *  embedTimecode: true
     * This sends the timecode (offset since start of recording) and timestamp (milliseconds since epoch) over the data channel.
-*  timecodeFrequency: 100
-    * How frequenently to send the timestamp. value of 100 means 10 every second.
+*  timecodeFrequency: 1000
+    * How frequenently to send the timestamp in ms. value of 1000 means 1 every second.
 *  eventHandler: function(event){}
     * The publisher will send events, such as `status`, `connect`, `disconnect`, and `error`.
     * events look like:

@@ -478,7 +478,7 @@ defaultOptions = {
   bandwidth: 1500,
   videoQuality: 90,
   embedTimecode: true,
-  timecodeFrequency: 100
+  timecodeFrequency: 1000
 };
 
 loadPublisher = function(domNode, publishOptions, publishReadyCallback) {
