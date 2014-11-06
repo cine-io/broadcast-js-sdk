@@ -1,7 +1,6 @@
 loadingSWF = false
 loadedSWF = false
 waitingPublishCalls = {}
-DEFAULT_BASE_URL = 'rtmp://publish-west.cine.io/live'
 PUBLISHER_NAME = 'Publisher'
 PUBLISHER_URL = '//cdn.cine.io/publisher.swf'
 numberOfPublishers = 0
@@ -187,7 +186,7 @@ class Publisher
 
   _options: (stream)->
     options =
-      serverURL: @serverURL || DEFAULT_BASE_URL
+      serverURL: @serverURL || ApiBridge.defaultBaseUrl()
       streamName: generateStreamName(stream, @password)
       audioCodec: userOrDefault(@publishOptions, 'audioCodec')
       streamWidth: userOrDefault(@publishOptions, 'streamWidth')

@@ -1,4 +1,5 @@
 BASE_URL = "https://www.cine.io/api/1/-"
+DEFAULT_BASE_URL = 'rtmp://publish-sfo1.cine.io:1936/live'
 
 cachedResponses = {}
 hasOwnProperty = Object.prototype.hasOwnProperty
@@ -39,6 +40,9 @@ exports.getStreamRecordings = (streamId, options, callback)->
   url = "#{BASE_URL}/stream/recordings?publicKey=#{Main.config.publicKey}&id=#{streamId}"
   errorMessage =  "Could not fetch stream recordings for #{streamId}"
   fetchUrlWitCallback(url, errorMessage, options, callback)
+
+exports.defaultBaseUrl = ->
+  return 'rtmp://publish-sfo1.cine.io:1936/live'
 
 exports._clear = ->
   cachedResponses = {}

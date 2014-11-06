@@ -203,3 +203,7 @@ describe 'ApiBridge', ->
             ]
           )
           done(err)
+
+  describe 'defaultBaseUrl', ->
+    it 'returns the defaultBaseUrl', ->
+      expect(ApiBridge.defaultBaseUrl()).to.equal('rtmp://publish-sfo1.cine.io:1936/live')

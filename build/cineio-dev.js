@@ -30,9 +30,11 @@ module.exports = function(val){
 }
 
 },{}],2:[function(require,module,exports){
-var BASE_URL, Main, ajax, cachedResponses, fetchUrlWitCallback, hasOwnProperty;
+var BASE_URL, DEFAULT_BASE_URL, Main, ajax, cachedResponses, fetchUrlWitCallback, hasOwnProperty;
 
 BASE_URL = "https://www.cine.io/api/1/-";
+
+DEFAULT_BASE_URL = 'rtmp://publish-sfo1.cine.io:1936/live';
 
 cachedResponses = {};
 
@@ -85,6 +87,10 @@ exports.getStreamRecordings = function(streamId, options, callback) {
   url = "" + BASE_URL + "/stream/recordings?publicKey=" + Main.config.publicKey + "&id=" + streamId;
   errorMessage = "Could not fetch stream recordings for " + streamId;
   return fetchUrlWitCallback(url, errorMessage, options, callback);
+};
+
+exports.defaultBaseUrl = function() {
+  return 'rtmp://publish-sfo1.cine.io:1936/live';
 };
 
 exports._clear = function() {
@@ -446,7 +452,7 @@ ApiBridge = require('./api_bridge');
 
 
 },{"./api_bridge":2,"./flash_detect":3,"./vendor/get_script":8}],6:[function(require,module,exports){
-var ApiBridge, DEFAULT_BASE_URL, PUBLISHER_NAME, PUBLISHER_URL, Publisher, createGlobalCallback, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, numberOfPublishers, publisherIsLoading, publisherIsReady, swfObjectCallbackToLoadPublisher, userOrDefault, waitingPublishCalls,
+var ApiBridge, PUBLISHER_NAME, PUBLISHER_URL, Publisher, createGlobalCallback, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, numberOfPublishers, publisherIsLoading, publisherIsReady, swfObjectCallbackToLoadPublisher, userOrDefault, waitingPublishCalls,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 loadingSWF = false;
@@ -454,8 +460,6 @@ loadingSWF = false;
 loadedSWF = false;
 
 waitingPublishCalls = {};
-
-DEFAULT_BASE_URL = 'rtmp://publish-west.cine.io/live';
 
 PUBLISHER_NAME = 'Publisher';
 
@@ -723,7 +727,7 @@ Publisher = (function() {
   Publisher.prototype._options = function(stream) {
     var intervalSecs, options;
     options = {
-      serverURL: this.serverURL || DEFAULT_BASE_URL,
+      serverURL: this.serverURL || ApiBridge.defaultBaseUrl(),
       streamName: generateStreamName(stream, this.password),
       audioCodec: userOrDefault(this.publishOptions, 'audioCodec'),
       streamWidth: userOrDefault(this.publishOptions, 'streamWidth'),

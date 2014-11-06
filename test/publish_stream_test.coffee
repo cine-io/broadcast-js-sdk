@@ -248,7 +248,7 @@ describe 'PublishStream', ->
         audioCodec: "NellyMoser"
         bandwidth: 12288000
         keyFrameInterval: 45
-        serverURL: "rtmp://publish-west.cine.io/live"
+        serverURL: "rtmp://publish-sfo1.cine.io:1936/live"
         streamFPS: 15
         streamHeight: 404
         streamName: "streamName?thePassword&adbe-live-event=streamName"
@@ -264,7 +264,7 @@ describe 'PublishStream', ->
         audioCodec: "Speex"
         bandwidth: 20480000
         keyFrameInterval: 80
-        serverURL: "rtmp://publish-west.cine.io/live"
+        serverURL: "rtmp://publish-sfo1.cine.io:1936/live"
         streamFPS: 20
         streamHeight: 900
         streamName: "streamName?thePassword&adbe-live-event=streamName"
