@@ -90,7 +90,7 @@ exports.getStreamRecordings = function(streamId, options, callback) {
 };
 
 exports.defaultBaseUrl = function() {
-  return 'rtmp://publish-sfo1.cine.io:1936/live';
+  return DEFAULT_BASE_URL;
 };
 
 exports._clear = function() {

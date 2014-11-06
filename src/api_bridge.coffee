@@ -42,7 +42,7 @@ exports.getStreamRecordings = (streamId, options, callback)->
   fetchUrlWitCallback(url, errorMessage, options, callback)
 
 exports.defaultBaseUrl = ->
-  return 'rtmp://publish-sfo1.cine.io:1936/live'
+  return DEFAULT_BASE_URL
 
 exports._clear = ->
   cachedResponses = {}
