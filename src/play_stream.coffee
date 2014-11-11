@@ -34,7 +34,7 @@ ensurePlayerLoaded = (cb)->
   return enqueuePlayerCallback(cb) if loadingPlayer
   loadingPlayer = true
 
-  getScript jwPlayerUrl(), playerIsReady
+  getScript urlWithProtocol('jwpsrv.com/library/sq8RfmIXEeOtdhIxOQfUww.js'), playerIsReady
   enqueuePlayerCallback cb
 
 userOrDefault = (userOptions, key)->
@@ -119,3 +119,4 @@ exports.recording = (streamId, recordingName, domNode, playOptions={}, callback=
 getScript = require('./vendor/get_script')
 flashDetect = require('./flash_detect')
 ApiBridge = require('./api_bridge')
+urlWithProtocol = require('./url_with_protocol')

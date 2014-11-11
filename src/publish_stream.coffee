@@ -101,7 +101,7 @@ getPublisher = (domNode, publishOptions, cb)->
   # case 1
   # else load the swf
   else
-    getScript '//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', swfObjectCallbackToLoadPublisher(domNode, publishOptions, cb)
+    getScript urlWithProtocol('ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'), swfObjectCallbackToLoadPublisher(domNode, publishOptions, cb)
 
 generateStreamName = (stream, password)->
   "#{stream.streamName}?#{password}&adbe-live-event=#{stream.streamName}"
@@ -222,3 +222,4 @@ window._jsLogFunction = (msg)->
 
 getScript = require('./vendor/get_script')
 ApiBridge = require('./api_bridge')
+urlWithProtocol = require('./url_with_protocol')

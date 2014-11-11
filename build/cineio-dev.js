@@ -103,7 +103,7 @@ ajax = require('./vendor/ajax');
 
 
 
-},{"./main":4,"./vendor/ajax":7}],3:[function(require,module,exports){
+},{"./main":4,"./vendor/ajax":8}],3:[function(require,module,exports){
 var getNavigator, newNavigator;
 
 newNavigator = null;
@@ -262,7 +262,7 @@ ApiBridge = require('./api_bridge');
 
 
 },{"./api_bridge":2,"./play_stream":5,"./publish_stream":6}],5:[function(require,module,exports){
-var ApiBridge, defaultOptions, enqueuePlayerCallback, ensurePlayerLoaded, flashDetect, getRecordingUrl, getScript, jwPlayerUrl, loadingPlayer, noop, playLive, playNative, playRecording, playerIsReady, playerReady, startJWPlayer, userOrDefault, waitingPlayCalls;
+var ApiBridge, defaultOptions, enqueuePlayerCallback, ensurePlayerLoaded, flashDetect, getRecordingUrl, getScript, jwPlayerUrl, loadingPlayer, noop, playLive, playNative, playRecording, playerIsReady, playerReady, startJWPlayer, urlWithProtocol, userOrDefault, waitingPlayCalls;
 
 playerReady = false;
 
@@ -315,7 +315,7 @@ ensurePlayerLoaded = function(cb) {
     return enqueuePlayerCallback(cb);
   }
   loadingPlayer = true;
-  getScript(jwPlayerUrl(), playerIsReady);
+  getScript(urlWithProtocol('jwpsrv.com/library/sq8RfmIXEeOtdhIxOQfUww.js'), playerIsReady);
   return enqueuePlayerCallback(cb);
 };
 
@@ -449,10 +449,12 @@ flashDetect = require('./flash_detect');
 
 ApiBridge = require('./api_bridge');
 
+urlWithProtocol = require('./url_with_protocol');
 
 
-},{"./api_bridge":2,"./flash_detect":3,"./vendor/get_script":8}],6:[function(require,module,exports){
-var ApiBridge, PUBLISHER_NAME, PUBLISHER_URL, Publisher, createGlobalCallback, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, numberOfPublishers, publisherIsLoading, publisherIsReady, swfObjectCallbackToLoadPublisher, userOrDefault, waitingPublishCalls,
+
+},{"./api_bridge":2,"./flash_detect":3,"./url_with_protocol":7,"./vendor/get_script":9}],6:[function(require,module,exports){
+var ApiBridge, PUBLISHER_NAME, PUBLISHER_URL, Publisher, createGlobalCallback, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, numberOfPublishers, publisherIsLoading, publisherIsReady, swfObjectCallbackToLoadPublisher, urlWithProtocol, userOrDefault, waitingPublishCalls,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 loadingSWF = false;
@@ -568,7 +570,7 @@ getPublisher = function(domNode, publishOptions, cb) {
   if (loadedSWF) {
     return loadPublisher(domNode, publishOptions);
   } else {
-    return getScript('//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', swfObjectCallbackToLoadPublisher(domNode, publishOptions, cb));
+    return getScript(urlWithProtocol('ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'), swfObjectCallbackToLoadPublisher(domNode, publishOptions, cb));
   }
 };
 
@@ -790,9 +792,28 @@ getScript = require('./vendor/get_script');
 
 ApiBridge = require('./api_bridge');
 
+urlWithProtocol = require('./url_with_protocol');
 
 
-},{"./api_bridge":2,"./vendor/get_script":8}],7:[function(require,module,exports){
+
+},{"./api_bridge":2,"./url_with_protocol":7,"./vendor/get_script":9}],7:[function(require,module,exports){
+var urlWithProtocol;
+
+urlWithProtocol = function(url) {
+  var protocol;
+  protocol = urlWithProtocol._getProtocol() === 'https:' ? 'https' : 'http';
+  return "" + protocol + "://" + url;
+};
+
+urlWithProtocol._getProtocol = function() {
+  return location.protocol;
+};
+
+module.exports = urlWithProtocol;
+
+
+
+},{}],8:[function(require,module,exports){
 // https://github.com/ForbesLindesay/ajax
 var type
 try {
@@ -1086,7 +1107,7 @@ function extend(target) {
   return target
 }
 
-},{"type-of":1}],8:[function(require,module,exports){
+},{"type-of":1}],9:[function(require,module,exports){
 // https://gist.github.com/colingourlay/7209131
 /**
  * Fetches and inserts a script into the page before the first
