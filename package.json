@@ -4,7 +4,7 @@
   "domains": [
     "cine.io"
   ],
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "JavaScript SDK for cine.io",
   "scripts": {
     "test": "coffeelint src/ test/ && grunt test"
