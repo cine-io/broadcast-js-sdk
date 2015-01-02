@@ -3,7 +3,7 @@ requiresInit = ->
 noop = ->
 
 CineIO =
-  version: "0.2.5"
+  version: "0.2.6"
   config: {}
   init: (publicKey, options)->
     throw new Error("Public Key required") unless publicKey

@@ -4,12 +4,12 @@
   "domains": [
     "cine.io"
   ],
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "JavaScript SDK for cine.io",
   "scripts": {
     "test": "coffeelint src/ test/ && grunt test"
   },
-  "repository": "https://github.com/cine-io/js-sdk",
+  "repository": "https://github.com/cine-io/broadcast-js-sdk",
   "dependencies": {},
   "devDependencies": {
     "async": "^0.9.0",
