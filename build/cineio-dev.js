@@ -154,7 +154,7 @@ requiresInit = function() {
 noop = function() {};
 
 CineIO = {
-  version: "0.2.5",
+  version: "0.2.6",
   config: {},
   init: function(publicKey, options) {
     var prop, value, _results;
