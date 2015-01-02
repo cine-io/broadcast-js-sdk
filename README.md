@@ -1,6 +1,6 @@
 # [cine.io](https://www.cine.io) JS SDK
 
-[![Build Status](https://travis-ci.org/cine-io/js-sdk.svg?branch=master)](https://travis-ci.org/cine-io/js-sdk)
+[![Build Status](https://travis-ci.org/cine-io/broadcast-js-sdk.svg?branch=master)](https://travis-ci.org/cine-io/broadcast-js-sdk)
 
 The JavaScript SDK for [cine.io](https://www.cine.io).
 
