@@ -7,7 +7,7 @@ The JavaScript SDK for [cine.io](https://www.cine.io).
 ## Installation
 
 ```html
-<script src="//cdn.cine.io/cineio.js"></script>
+<script src="//cdn.cine.io/cineio-broadcast.js"></script>
 ```
 
 ## Usage
