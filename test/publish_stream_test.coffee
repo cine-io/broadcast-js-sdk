@@ -41,7 +41,7 @@ describe 'PublishStream', ->
       streamName:"streamName"
       play:
         hls:"http://hls.cine.io/cines/streamName/streamName.m3u8"
-        rtmp:"rtmp://fml.cine.io/20C45E/cines/streamName?adbe-live-event=streamName"
+        rtmp:"rtmp://fml.cine.io/20C45E/cines/streamName"
     @nearestServerCalled = false
     @streamDetailsCalled = false
     jsonpResponder = (options)=>
@@ -251,7 +251,7 @@ describe 'PublishStream', ->
         serverURL: "rtmp://publish-sfo1.cine.io:1936/live"
         streamFPS: 15
         streamHeight: 404
-        streamName: "streamName?thePassword&adbe-live-event=streamName"
+        streamName: "streamName?thePassword"
         streamWidth: 720
         videoQuality: 90
         embedTimecode: true
@@ -267,7 +267,7 @@ describe 'PublishStream', ->
         serverURL: "rtmp://publish-sfo1.cine.io:1936/live"
         streamFPS: 20
         streamHeight: 900
-        streamName: "streamName?thePassword&adbe-live-event=streamName"
+        streamName: "streamName?thePassword"
         streamWidth: 1600
         videoQuality: 70
         embedTimecode: false

@@ -104,7 +104,7 @@ getPublisher = (domNode, publishOptions, cb)->
     getScript urlWithProtocol('ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'), swfObjectCallbackToLoadPublisher(domNode, publishOptions, cb)
 
 generateStreamName = (stream, password)->
-  "#{stream.streamName}?#{password}&adbe-live-event=#{stream.streamName}"
+  "#{stream.streamName}?#{password}"
 
 
 userOrDefault = (userOptions, key)->

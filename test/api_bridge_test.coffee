@@ -23,7 +23,7 @@ describe 'ApiBridge', ->
         streamName:"streamName"
         play:
           hls:"http://hls.cine.io/cines/streamName/streamName.m3u8"
-          rtmp:"rtmp://fml.cine.io/20C45E/cines/streamName?adbe-live-event=streamName"
+          rtmp:"rtmp://fml.cine.io/20C45E/cines/streamName"
 
       @xhrStub = sinon.stub(ajax, 'JSONP').yieldsTo("success", successfulResponse)
 
@@ -51,7 +51,7 @@ describe 'ApiBridge', ->
         streamName:"streamName"
         play:
           hls:"http://hls.cine.io/cines/streamName/streamName.m3u8"
-          rtmp:"rtmp://fml.cine.io/20C45E/cines/streamName?adbe-live-event=streamName"
+          rtmp:"rtmp://fml.cine.io/20C45E/cines/streamName"
 
     describe 'second call', ->
       it 'does not make a second ajax call', (done)->
@@ -72,7 +72,7 @@ describe 'ApiBridge', ->
             streamName:"streamName"
             play:
               hls:"http://hls.cine.io/cines/streamName/streamName.m3u8"
-              rtmp:"rtmp://fml.cine.io/20C45E/cines/streamName?adbe-live-event=streamName"
+              rtmp:"rtmp://fml.cine.io/20C45E/cines/streamName"
           done(err)
 
   describe 'nearestServer', ->
