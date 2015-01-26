@@ -154,7 +154,7 @@ requiresInit = function() {
 noop = function() {};
 
 CineIO = {
-  version: "0.2.6",
+  version: "0.2.7",
   config: {},
   init: function(publicKey, options) {
     var prop, value, _results;
@@ -575,7 +575,7 @@ getPublisher = function(domNode, publishOptions, cb) {
 };
 
 generateStreamName = function(stream, password) {
-  return "" + stream.streamName + "?" + password + "&adbe-live-event=" + stream.streamName;
+  return "" + stream.streamName + "?" + password;
 };
 
 userOrDefault = function(userOptions, key) {
