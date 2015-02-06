@@ -1,8 +1,8 @@
-# [cine.io](https://www.cine.io) JS SDK
+# [cine.io](https://www.cine.io) Broadcast JS SDK
 
 [![Build Status](https://travis-ci.org/cine-io/broadcast-js-sdk.svg?branch=master)](https://travis-ci.org/cine-io/broadcast-js-sdk)
 
-The JavaScript SDK for [cine.io](https://www.cine.io).
+The JavaScript SDK for [cine.io](https://www.cine.io) [broadcast](https://www.cine.io/products/broadcast) publishing and playing.
 
 ## Installation
 
