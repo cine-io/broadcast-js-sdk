@@ -44,6 +44,14 @@ streamId is a [cine.io](https://www.cine.io) stream id. This is what is returned
 
 domId is the ID of the dom node you want the player to be injected into.
 
+Example HTML: 
+```html
+<div id="playerID">Playing Video</div>
+```
+Example JS:
+```javascript
+var domId = "playerID";
+```
 **available/default playOptions are:**
 
 *  stretching: 'uniform'
@@ -55,7 +63,17 @@ domId is the ID of the dom node you want the player to be injected into.
 *  mute: false
 *  controls: true
 *  rtmp:
-   * subscribe: true
+* subscribe: true
+
+Example: 
+```javascript
+var playOptions = {
+  width: "360px",
+  height: "640px",
+  autostart: false,
+  mute: true
+};
+```  
 
 **callback**
 
