@@ -123,7 +123,7 @@ class Publisher
   start: (callback=noop)->
     @_ensureLoaded (publisher)=>
       console.log('fetching stream', publisher)
-      @_setPublisherOptions publisher, (err)=>
+      @_setPublisherOptions publisher, (err)->
         return callback(err) if err
         publisher.start()
         callback()
@@ -138,7 +138,7 @@ class Publisher
 
   preview: (callback=noop)->
     @_ensureLoaded (publisher)=>
-      @_setPublisherOptions publisher, (err)=>
+      @_setPublisherOptions publisher, (err)->
         return callback(err) if err
         try
           publisher.preview()
