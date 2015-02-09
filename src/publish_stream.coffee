@@ -192,7 +192,14 @@ class Publisher
       streamWidth: userOrDefault(@publishOptions, 'streamWidth')
       streamHeight: userOrDefault(@publishOptions, 'streamHeight')
       streamFPS: userOrDefault(@publishOptions, 'streamFPS')
-      bandwidth: userOrDefault(@publishOptions, 'bandwidth') * 1024 * 8
+
+      # Kbps uses bites per second
+      # but action script wants bytes per seconds
+      # http://help.adobe.com/en_US/AS2LCR/Flash_10.0/help.html?content=00000880.html
+      # so we multiply by 1024 to get the K
+      # AS will then multiply by 8 to get bits
+      bandwidth: userOrDefault(@publishOptions, 'bandwidth') * 1024
+
       videoQuality: userOrDefault(@publishOptions, 'videoQuality')
       embedTimecode: userOrDefault(this.publishOptions, "embedTimecode"),
       timecodeFrequency: userOrDefault(this.publishOptions, "timecodeFrequency")
