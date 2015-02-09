@@ -44,14 +44,6 @@ streamId is a [cine.io](https://www.cine.io) stream id. This is what is returned
 
 domId is the ID of the dom node you want the player to be injected into.
 
-Example HTML: 
-```html
-<div id="playerID">Playing Video</div>
-```
-Example JS:
-```javascript
-var domId = "playerID";
-```
 **available/default playOptions are:**
 
 *  stretching: 'uniform'
@@ -65,22 +57,31 @@ var domId = "playerID";
 *  rtmp:
 * subscribe: true
 
-Example: 
-```javascript
-var playOptions = {
-  width: "360px",
-  height: "640px",
-  autostart: false,
-  mute: true
-};
-```  
-
 **callback**
 
 You can optionally pass a callback to retrieve the player. This will return any errors and instance of jwplayer in desktop environments or a video element tag.
 
 ```javascript
 function(error, player) {console.log("player ready", error, player)}
+```
+
+> Complete Play Example:
+```html
+<div id="playerID">Playing Video</div>
+<script>
+var streamId = "cine.io stream id";
+var domId = "playerID";
+var playOptions = {
+  width: "360px",
+  height: "640px",
+  autostart: false,
+  mute: true
+};
+var callback = function(error, player){
+  console.log("playing");
+}
+CineIO.play(streamId, domId, playOptions, callback);
+</script>
 ```
 
 #### Publish
