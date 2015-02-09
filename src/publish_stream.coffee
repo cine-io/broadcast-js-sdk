@@ -17,8 +17,8 @@ defaultOptions =
   streamFPS: 15
   keyFrameInterval: null
   intervalSecs: 3 #not passed to publisher
-  bandwidth: 1500
-  videoQuality: 90
+  bandwidth: 1500 # kbps
+  videoQuality: 0  # setting a videoQuality of 0, will mean frame rate will stay the same, but quality will decline on loss of bandwidth
   embedTimecode: true
   timecodeFrequency: 1000
 
