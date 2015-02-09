@@ -123,12 +123,8 @@ class Publisher
   start: (callback=noop)->
     @_ensureLoaded (publisher)=>
       console.log('fetching stream', publisher)
-      ApiBridge.getStreamDetails @streamId, (err, stream)=>
+      @_setPublisherOptions publisher, (err)=>
         return callback(err) if err
-        options = @_options(stream)
-        # console.log('streamingggg!!', options)
-        # console.log("SET OPTIONS", publisher.setOptions)
-        publisher.setOptions options
         publisher.start()
         callback()
 
@@ -141,12 +137,15 @@ class Publisher
       callback()
 
   preview: (callback=noop)->
-    @_ensureLoaded (publisher)->
-      try
-        publisher.preview()
-      catch e
-        return callback(e)
-      callback()
+    @_ensureLoaded (publisher)=>
+      @_setPublisherOptions publisher, (err)=>
+        return callback(err) if err
+        try
+          publisher.preview()
+        catch e
+          return callback(e)
+
+        callback()
 
   getMediaInfo: (callback=noop)->
     @_ensureLoaded (publisher)->
@@ -183,6 +182,17 @@ class Publisher
       catch e
         return callback(e)
       callback(null, response)
+
+  _setPublisherOptions: (publisher, callback)=>
+    return callback() if @_haveSetPublisherOptions
+    ApiBridge.getStreamDetails @streamId, (err, stream)=>
+      return callback(err) if err
+      options = @_options(stream)
+      # console.log('streamingggg!!', options)
+      # console.log("SET OPTIONS", publisher.setOptions)
+      publisher.setOptions options
+      @_haveSetPublisherOptions = true
+      callback()
 
   _options: (stream)->
     options =
