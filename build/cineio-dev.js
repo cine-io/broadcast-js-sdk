@@ -154,7 +154,7 @@ requiresInit = function() {
 noop = function() {};
 
 CineIO = {
-  version: "0.2.7",
+  version: "0.2.8",
   config: {},
   init: function(publicKey, options) {
     var prop, value, _results;
@@ -482,7 +482,7 @@ defaultOptions = {
   keyFrameInterval: null,
   intervalSecs: 3,
   bandwidth: 1500,
-  videoQuality: 90,
+  videoQuality: 0,
   embedTimecode: true,
   timecodeFrequency: 1000
 };
@@ -596,6 +596,7 @@ Publisher = (function() {
       callback = noop;
     }
     this._eventHandler = __bind(this._eventHandler, this);
+    this._setPublisherOptions = __bind(this._setPublisherOptions, this);
     if (typeof this.publishOptions === 'function') {
       callback = publishOptions;
       this.publishOptions = {};
@@ -612,13 +613,10 @@ Publisher = (function() {
     return this._ensureLoaded((function(_this) {
       return function(publisher) {
         console.log('fetching stream', publisher);
-        return ApiBridge.getStreamDetails(_this.streamId, function(err, stream) {
-          var options;
+        return _this._setPublisherOptions(publisher, function(err) {
           if (err) {
             return callback(err);
           }
-          options = _this._options(stream);
-          publisher.setOptions(options);
           publisher.start();
           return callback();
         });
@@ -646,16 +644,23 @@ Publisher = (function() {
     if (callback == null) {
       callback = noop;
     }
-    return this._ensureLoaded(function(publisher) {
-      var e;
-      try {
-        publisher.preview();
-      } catch (_error) {
-        e = _error;
-        return callback(e);
-      }
-      return callback();
-    });
+    return this._ensureLoaded((function(_this) {
+      return function(publisher) {
+        return _this._setPublisherOptions(publisher, function(err) {
+          var e;
+          if (err) {
+            return callback(err);
+          }
+          try {
+            publisher.preview();
+          } catch (_error) {
+            e = _error;
+            return callback(e);
+          }
+          return callback();
+        });
+      };
+    })(this));
   };
 
   Publisher.prototype.getMediaInfo = function(callback) {
@@ -726,6 +731,24 @@ Publisher = (function() {
     });
   };
 
+  Publisher.prototype._setPublisherOptions = function(publisher, callback) {
+    if (this._haveSetPublisherOptions) {
+      return callback();
+    }
+    return ApiBridge.getStreamDetails(this.streamId, (function(_this) {
+      return function(err, stream) {
+        var options;
+        if (err) {
+          return callback(err);
+        }
+        options = _this._options(stream);
+        publisher.setOptions(options);
+        _this._haveSetPublisherOptions = true;
+        return callback();
+      };
+    })(this));
+  };
+
   Publisher.prototype._options = function(stream) {
     var intervalSecs, options;
     options = {
@@ -735,7 +758,7 @@ Publisher = (function() {
       streamWidth: userOrDefault(this.publishOptions, 'streamWidth'),
       streamHeight: userOrDefault(this.publishOptions, 'streamHeight'),
       streamFPS: userOrDefault(this.publishOptions, 'streamFPS'),
-      bandwidth: userOrDefault(this.publishOptions, 'bandwidth') * 1024 * 8,
+      bandwidth: userOrDefault(this.publishOptions, 'bandwidth') * 1024,
       videoQuality: userOrDefault(this.publishOptions, 'videoQuality'),
       embedTimecode: userOrDefault(this.publishOptions, "embedTimecode"),
       timecodeFrequency: userOrDefault(this.publishOptions, "timecodeFrequency")
