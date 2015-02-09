@@ -115,7 +115,7 @@ describe 'PublishStream', ->
           checkForPlayer.call this, (err)=>
             expect(err).to.be.undefined
             expect(@nearestServerCalled).to.be.true
-            expect(@streamDetailsCalled).to.be.false
+            expect(@streamDetailsCalled).to.be.true
             done()
 
   describe '#getMediaInfo', ->
@@ -246,14 +246,14 @@ describe 'PublishStream', ->
     it 'generates the correct default options', (done)->
       expectedOptions =
         audioCodec: "NellyMoser"
-        bandwidth: 12288000
+        bandwidth: 1500 * 1024
         keyFrameInterval: 45
         serverURL: "rtmp://publish-sfo1.cine.io:1936/live"
         streamFPS: 15
         streamHeight: 404
         streamName: "streamName?thePassword"
         streamWidth: 720
-        videoQuality: 90
+        videoQuality: 0
         embedTimecode: true
         timecodeFrequency: 1000
       givenOptions = {}
@@ -262,7 +262,7 @@ describe 'PublishStream', ->
     it 'can overwrite default options', (done)->
       expectedOptions =
         audioCodec: "Speex"
-        bandwidth: 20480000
+        bandwidth: 2500 * 1024
         keyFrameInterval: 80
         serverURL: "rtmp://publish-sfo1.cine.io:1936/live"
         streamFPS: 20
