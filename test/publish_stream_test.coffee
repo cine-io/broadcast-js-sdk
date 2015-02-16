@@ -4,6 +4,7 @@ flashDetect = require('../src/flash_detect')
 ajax = require('../src/vendor/ajax')
 async = require('async')
 ApiBridge = require('../src/api_bridge')
+debug = require('debug')('cine:broadcast:play_stream_test')
 
 describe 'PublishStream', ->
   unless flashDetect()

@@ -1,3 +1,5 @@
+require('./debug')
+
 requiresInit = ->
   throw new Error("CineIO.init(CINE_IO_PUBLIC_KEY) has not been called.") unless CineIO.config.publicKey
 noop = ->

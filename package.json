@@ -10,13 +10,15 @@
     "test": "coffeelint src/ test/ && grunt test"
   },
   "repository": "https://github.com/cine-io/broadcast-js-sdk",
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "async": "^0.9.0",
     "chai": "^1.9.1",
     "coffee-script": "^1.7.1",
     "coffeeify": "^0.7.0",
     "coffeelint": "^1.5.2",
+    "envify": "^3.2.0",
     "grunt": "^0.4.5",
     "grunt-browserify": "^2.1.4",
     "grunt-cli": "^0.1.13",
@@ -24,6 +26,7 @@
     "grunt-contrib-uglify": "^0.5.1",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha": "^0.4.11",
+    "grunt-trimtrailingspaces": "^1.1.0",
     "mocha": "^1.21.3",
     "sinon": "^1.10.3",
     "type-of": "^2.0.1"

@@ -1,16 +1,23 @@
-
 module.exports = (grunt) ->
   grunt.initConfig
     pkg: grunt.file.readJSON("package.json")
 
     browserify:
-      jssdk:
+      development:
         files:
-          'build/cineio-dev.js': ['src/main.coffee']
+          'build/compiled-dev.js': ['src/main.coffee']
         options:
           browserifyOptions:
             extensions: ['.coffee', '.js']
-          transform: ['coffeeify']
+          transform: ['coffeeify', ['envify', NODE_ENV: 'development']]
+
+      production:
+        files:
+          'build/compiled-prod.js': ['src/main.coffee']
+        options:
+          browserifyOptions:
+            extensions: ['.coffee', '.js']
+          transform: ['coffeeify', ['envify', NODE_ENV: 'production']]
 
       tests:
         files:
@@ -21,24 +28,25 @@ module.exports = (grunt) ->
           transform: ['coffeeify']
 
     uglify:
-      options:
-        report: "min"
-
       production:
         files:
-          "build/cineio.js": ["build/cineio-dev.js"]
+          'build/compiled-prod.js': ['build/compiled-prod.js']
 
     watch:
       grunt:
         files: ["Gruntfile.coffee"]
 
-      jssdk:
+      main:
         files: ["src/*.coffee"]
         tasks: ["compile"]
 
       tests:
-        files: ["test/*.coffee", "src/*.coffee", "src/**/*.js"]
+        files: ["test/*.coffee", "test/**/*.coffee", "src/*.coffee", "src/**/*.js"]
         tasks: ["browserify:tests"]
+
+    trimtrailingspaces:
+      development:
+        src: ['build/compiled-dev.js']
 
     mocha:
       all:
@@ -48,15 +56,17 @@ module.exports = (grunt) ->
         log: true
         reporter: 'Spec'
 
-  grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-coffee');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-mocha');
-  grunt.loadNpmTasks "grunt-contrib-watch"
+  grunt.loadNpmTasks('grunt-browserify')
+  grunt.loadNpmTasks('grunt-contrib-coffee')
+  grunt.loadNpmTasks('grunt-mocha')
+  grunt.loadNpmTasks("grunt-contrib-watch")
+  grunt.loadNpmTasks('grunt-contrib-uglify')
+  grunt.loadNpmTasks('grunt-trimtrailingspaces')
 
-
-  grunt.registerTask "compile", ["browserify:jssdk", "uglify"]
+  grunt.registerTask "compile:production", ["browserify:production", "uglify"]
+  grunt.registerTask "compile:development", ["browserify:development", "trimtrailingspaces:development"]
+  grunt.registerTask "compile", ["compile:development", "compile:production"]
 
   grunt.registerTask "test", ["browserify:tests", "mocha"]
 
-  grunt.registerTask "default", ["browserify", "watch"]
+  grunt.registerTask "default", ["compile", "browserify:tests", "watch"]

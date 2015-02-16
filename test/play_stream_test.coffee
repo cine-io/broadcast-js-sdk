@@ -4,7 +4,7 @@ ApiBridge = require('../src/api_bridge')
 ajax = require('../src/vendor/ajax')
 async = require('async')
 flashDetect = require('../src/flash_detect')
-
+debug = require('debug')('cine:broadcast:play_stream_test')
 describe 'PlayStream', ->
   unless flashDetect()
     it 'needs to be checked in the browser'
@@ -45,11 +45,11 @@ describe 'PlayStream', ->
       testFunction = -> playerExists
       checkFunction = (callback)->
         playerDiv = window.document.getElementById('player-id')
-        console.log('checking type', playerDiv.type)
+        debug('checking type', playerDiv.type)
         playerExists = playerDiv.type == 'application/x-shockwave-flash'
         setTimeout callback
       async.until testFunction, checkFunction, (err)->
-        console.log("GOT ERROR", err)
+        debug("GOT ERROR", err)
         done(err)
 
     afterEach ->
@@ -95,7 +95,7 @@ describe 'PlayStream', ->
         playerExists = window.document.getElementById('player-id_media')?
         setTimeout callback
       async.until testFunction, checkFunction, (err)->
-        console.log("GOT ERROR", err)
+        debug("GOT ERROR", err)
         done(err)
 
     afterEach ->

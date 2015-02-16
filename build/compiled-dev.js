@@ -103,7 +103,28 @@ ajax = require('./vendor/ajax');
 
 
 
-},{"./main":4,"./vendor/ajax":8}],3:[function(require,module,exports){
+},{"./main":5,"./vendor/ajax":9}],3:[function(require,module,exports){
+var __slice = [].slice;
+
+if ("development" === 'production') {
+  module.exports = function() {
+    return function() {};
+  };
+}
+
+if ("development" === 'development') {
+  module.exports = function(value) {
+    return function() {
+      var messages;
+      messages = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return console.log.apply(console, [value].concat(__slice.call(messages)));
+    };
+  };
+}
+
+
+
+},{}],4:[function(require,module,exports){
 var getNavigator, newNavigator;
 
 newNavigator = null;
@@ -142,8 +163,10 @@ module.exports._injectNavigator = function(nav) {
 
 
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var ApiBridge, CineIO, PlayStream, PublishStream, noop, requiresInit;
+
+require('./debug');
 
 requiresInit = function() {
   if (!CineIO.config.publicKey) {
@@ -261,14 +284,16 @@ ApiBridge = require('./api_bridge');
 
 
 
-},{"./api_bridge":2,"./play_stream":5,"./publish_stream":6}],5:[function(require,module,exports){
-var ApiBridge, defaultOptions, enqueuePlayerCallback, ensurePlayerLoaded, flashDetect, getRecordingUrl, getScript, jwPlayerUrl, loadingPlayer, noop, playLive, playNative, playRecording, playerIsReady, playerReady, startJWPlayer, urlWithProtocol, userOrDefault, waitingPlayCalls;
+},{"./api_bridge":2,"./debug":3,"./play_stream":6,"./publish_stream":7}],6:[function(require,module,exports){
+var ApiBridge, debug, defaultOptions, enqueuePlayerCallback, ensurePlayerLoaded, flashDetect, getRecordingUrl, getScript, jwPlayerUrl, loadingPlayer, noop, playLive, playNative, playRecording, playerIsReady, playerReady, startJWPlayer, urlWithProtocol, userOrDefault, waitingPlayCalls;
 
 playerReady = false;
 
 loadingPlayer = false;
 
 waitingPlayCalls = [];
+
+debug = require('./debug')("cine:broadcast:play_stream");
 
 noop = function() {};
 
@@ -358,7 +383,7 @@ startJWPlayer = function(flashSource, nativeSouce, domNode, playOptions, callbac
     rtmp: userOrDefault(playOptions, 'rtmp'),
     controlbar: userOrDefault(playOptions, 'controls')
   };
-  console.log('playing', options);
+  debug('playing', options);
   player = jwplayer(domNode).setup(options);
   if (!userOrDefault(playOptions, 'controls')) {
     player.setControls(false);
@@ -453,8 +478,8 @@ urlWithProtocol = require('./url_with_protocol');
 
 
 
-},{"./api_bridge":2,"./flash_detect":3,"./url_with_protocol":7,"./vendor/get_script":9}],6:[function(require,module,exports){
-var ApiBridge, PUBLISHER_NAME, PUBLISHER_URL, Publisher, createGlobalCallback, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, numberOfPublishers, publisherIsLoading, publisherIsReady, swfObjectCallbackToLoadPublisher, urlWithProtocol, userOrDefault, waitingPublishCalls,
+},{"./api_bridge":2,"./debug":3,"./flash_detect":4,"./url_with_protocol":8,"./vendor/get_script":10}],7:[function(require,module,exports){
+var ApiBridge, PUBLISHER_NAME, PUBLISHER_URL, Publisher, createGlobalCallback, debug, defaultOptions, enqueuePublisherCallback, findPublisherInDom, generateStreamName, getPublisher, getScript, loadPublisher, loadedSWF, loadingSWF, noop, numberOfPublishers, publisherIsLoading, publisherIsReady, swfObjectCallbackToLoadPublisher, urlWithProtocol, userOrDefault, waitingPublishCalls,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 loadingSWF = false;
@@ -468,6 +493,8 @@ PUBLISHER_NAME = 'Publisher';
 PUBLISHER_URL = '//cdn.cine.io/publisher.swf';
 
 numberOfPublishers = 0;
+
+debug = require('./debug')("cine:broadcast:publish_stream");
 
 noop = function() {};
 
@@ -613,7 +640,7 @@ Publisher = (function() {
     }
     return this._ensureLoaded((function(_this) {
       return function(publisher) {
-        console.log('fetching stream', publisher);
+        debug('fetching stream', publisher);
         return _this._setPublisherOptions(publisher, function(err) {
           if (err) {
             return callback(err);
@@ -810,7 +837,7 @@ createGlobalCallback = function(object) {
 };
 
 window._jsLogFunction = function(msg) {
-  return console.log('_jsLogFunction', msg);
+  return debug('_jsLogFunction', msg);
 };
 
 getScript = require('./vendor/get_script');
@@ -821,7 +848,7 @@ urlWithProtocol = require('./url_with_protocol');
 
 
 
-},{"./api_bridge":2,"./url_with_protocol":7,"./vendor/get_script":9}],7:[function(require,module,exports){
+},{"./api_bridge":2,"./debug":3,"./url_with_protocol":8,"./vendor/get_script":10}],8:[function(require,module,exports){
 var urlWithProtocol;
 
 urlWithProtocol = function(url) {
@@ -838,7 +865,7 @@ module.exports = urlWithProtocol;
 
 
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // https://github.com/ForbesLindesay/ajax
 var type
 try {
@@ -1132,7 +1159,7 @@ function extend(target) {
   return target
 }
 
-},{"type-of":1}],9:[function(require,module,exports){
+},{"type-of":1}],10:[function(require,module,exports){
 // https://gist.github.com/colingourlay/7209131
 /**
  * Fetches and inserts a script into the page before the first
@@ -1184,4 +1211,4 @@ var getScript = function (src, callback) {
 };
 module.exports = getScript;
 
-},{}]},{},[4]);
+},{}]},{},[5]);

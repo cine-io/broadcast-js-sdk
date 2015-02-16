@@ -1,6 +1,7 @@
 playerReady = false
 loadingPlayer = false
 waitingPlayCalls = []
+debug = require('./debug')("cine:broadcast:play_stream")
 noop = ->
 
 defaultOptions =
@@ -68,7 +69,7 @@ startJWPlayer = (flashSource, nativeSouce, domNode, playOptions, callback)->
     rtmp: userOrDefault(playOptions, 'rtmp')
     controlbar: userOrDefault(playOptions, 'controls')
 
-  console.log('playing', options)
+  debug('playing', options)
 
   player = jwplayer(domNode).setup(options)
   player.setControls(false) if !userOrDefault(playOptions, 'controls')

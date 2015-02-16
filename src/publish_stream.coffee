@@ -4,6 +4,7 @@ waitingPublishCalls = {}
 PUBLISHER_NAME = 'Publisher'
 PUBLISHER_URL = '//cdn.cine.io/publisher.swf'
 numberOfPublishers = 0
+debug = require('./debug')("cine:broadcast:publish_stream")
 
 noop = ->
 
@@ -49,7 +50,7 @@ loadPublisher = (domNode, publishOptions, publishReadyCallback)->
       setTimeout readyCall, 1000
 
 publisherIsReady = (domNode)->
-  # console.log("publisher is ready")
+  # debug("publisher is ready")
   for call in waitingPublishCalls[domNode]
     call.call()
   delete waitingPublishCalls[domNode]
@@ -123,7 +124,7 @@ class Publisher
 
   start: (callback=noop)->
     @_ensureLoaded (publisher)=>
-      console.log('fetching stream', publisher)
+      debug('fetching stream', publisher)
       @_setPublisherOptions publisher, (err)->
         return callback(err) if err
         publisher.start()
@@ -189,8 +190,8 @@ class Publisher
     ApiBridge.getStreamDetails @streamId, (err, stream)=>
       return callback(err) if err
       options = @_options(stream)
-      # console.log('streamingggg!!', options)
-      # console.log("SET OPTIONS", publisher.setOptions)
+      # debug('streamingggg!!', options)
+      # debug("SET OPTIONS", publisher.setOptions)
       publisher.setOptions options
       @_haveSetPublisherOptions = true
       callback()
@@ -237,7 +238,7 @@ createGlobalCallback = (object)->
   return functionName
 
 window._jsLogFunction = (msg)->
-  console.log('_jsLogFunction', msg)
+  debug('_jsLogFunction', msg)
 
 getScript = require('./vendor/get_script')
 ApiBridge = require('./api_bridge')
