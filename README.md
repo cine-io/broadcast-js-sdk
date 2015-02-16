@@ -118,11 +118,16 @@ domId is the ID of the dom node you want the publisher to be injected into.
 *  streamFPS: 15
 *  intervalSecs: 3
 *  bandwidth: 1500
-    * Maximum bandwidth to be used. Default is 1500 kb/s. Adobe documentation [here](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/media/Camera.html#setQuality()).
+    * Maximum bandwidth to be used. Default is 1500 kb/s.
+    * [Adobe documentation](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/media/Camera.html#setQuality()).
 *  videoQuality: 0
     * Level of picture quality. 100 indicates no compression.
     * A quality of 0 means if there is a loss of client bandwidth, the frame rate will stay constant, but the video quality will decline. Setting a video quality, means that the frame rate will decline but the picture quality will stay constant.
     * [Adobe documentation](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/media/Camera.html#setQuality()).
+*  favorArea: false
+    * This parameter will favor maintaining the requested width x height instead of frame rate. If your video input (camera) does not support the requested width x height, then it might drop frames to maintain that requested width x height.
+    * We default to false to ensure the frame rate is preserved as best as possible, instead of prioritizing a resolution the input does not natively support.
+    * [Adobe documentation](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/media/Camera.html#setMode()).
 *  embedTimecode: true
     * This sends the timecode (offset since start of recording) and timestamp (milliseconds since epoch) over the data channel.
 *  timecodeFrequency: 1000
