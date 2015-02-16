@@ -484,7 +484,8 @@ defaultOptions = {
   bandwidth: 1500,
   videoQuality: 0,
   embedTimecode: true,
-  timecodeFrequency: 1000
+  timecodeFrequency: 1000,
+  favorArea: false
 };
 
 loadPublisher = function(domNode, publishOptions, publishReadyCallback) {
@@ -761,7 +762,8 @@ Publisher = (function() {
       bandwidth: userOrDefault(this.publishOptions, 'bandwidth') * 1024,
       videoQuality: userOrDefault(this.publishOptions, 'videoQuality'),
       embedTimecode: userOrDefault(this.publishOptions, "embedTimecode"),
-      timecodeFrequency: userOrDefault(this.publishOptions, "timecodeFrequency")
+      timecodeFrequency: userOrDefault(this.publishOptions, "timecodeFrequency"),
+      favorArea: userOrDefault(this.publishOptions, "favorArea")
     };
     intervalSecs = userOrDefault(this.publishOptions, 'intervalSecs');
     options.keyFrameInterval = options.streamFPS * intervalSecs;

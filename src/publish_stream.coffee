@@ -21,6 +21,7 @@ defaultOptions =
   videoQuality: 0  # setting a videoQuality of 0, will mean frame rate will stay the same, but quality will decline on loss of bandwidth
   embedTimecode: true
   timecodeFrequency: 1000
+  favorArea: false
 
 loadPublisher = (domNode, publishOptions, publishReadyCallback)->
   swfVersionStr = "11.4.0"
@@ -213,6 +214,7 @@ class Publisher
       videoQuality: userOrDefault(@publishOptions, 'videoQuality')
       embedTimecode: userOrDefault(this.publishOptions, "embedTimecode"),
       timecodeFrequency: userOrDefault(this.publishOptions, "timecodeFrequency")
+      favorArea: userOrDefault(this.publishOptions, "favorArea")
     intervalSecs = userOrDefault(@publishOptions, 'intervalSecs')
     options.keyFrameInterval = options.streamFPS * intervalSecs
     options

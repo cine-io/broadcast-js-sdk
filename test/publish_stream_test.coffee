@@ -256,6 +256,7 @@ describe 'PublishStream', ->
         videoQuality: 0
         embedTimecode: true
         timecodeFrequency: 1000
+        favorArea: false
       givenOptions = {}
       checkForOptions.call this, givenOptions, expectedOptions, done
 
@@ -272,6 +273,7 @@ describe 'PublishStream', ->
         videoQuality: 70
         embedTimecode: false
         timecodeFrequency: 999
+        favorArea: true
 
       givenOptions =
         audioCodec: 'Speex'
@@ -283,5 +285,6 @@ describe 'PublishStream', ->
         videoQuality: 70
         embedTimecode: false
         timecodeFrequency: 999
+        favorArea: true
 
       checkForOptions.call this, givenOptions, expectedOptions, done
