@@ -25,7 +25,7 @@ module.exports = (grunt) ->
         options:
           browserifyOptions:
             extensions: ['.coffee', '.js']
-          transform: ['coffeeify']
+          transform: ['coffeeify', ['envify', NODE_ENV: 'test']]
 
     uglify:
       production:

@@ -106,12 +106,6 @@ ajax = require('./vendor/ajax');
 },{"./main":5,"./vendor/ajax":9}],3:[function(require,module,exports){
 var __slice = [].slice;
 
-if ("development" === 'production') {
-  module.exports = function() {
-    return function() {};
-  };
-}
-
 if ("development" === 'development') {
   module.exports = function(value) {
     return function() {
@@ -119,6 +113,10 @@ if ("development" === 'development') {
       messages = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return console.log.apply(console, [value].concat(__slice.call(messages)));
     };
+  };
+} else {
+  module.exports = function() {
+    return function() {};
   };
 }
 

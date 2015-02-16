@@ -4,7 +4,7 @@ flashDetect = require('../src/flash_detect')
 ajax = require('../src/vendor/ajax')
 async = require('async')
 ApiBridge = require('../src/api_bridge')
-debug = require('debug')('cine:broadcast:play_stream_test')
+debug = require('../src/debug')('cine:broadcast:play_stream_test')
 
 describe 'PublishStream', ->
   unless flashDetect()
@@ -52,7 +52,7 @@ describe 'PublishStream', ->
       if options.url.indexOf("/stream") > 0
         @streamDetailsCalled = true
         return options.success(streamDetailsResponse)
-      console.log(options)
+      debug(options)
       throw new Error("UNKNOWN options")
 
     @xhrStub = sinon.stub(ajax, 'JSONP', jsonpResponder)
@@ -65,17 +65,17 @@ describe 'PublishStream', ->
     testFunction = -> playerExists
     checkFunction = (callback)=>
       publisherDiv = window.document.getElementById(@publishDivID)
-      console.log('checking type', publisherDiv.type)
+      debug('checking type', publisherDiv.type)
       playerExists = publisherDiv.type == 'application/x-shockwave-flash'
       setTimeout callback
     async.until testFunction, checkFunction, (err)->
-      console.log("GOT ERROR", err) if err
+      debug("GOT ERROR", err) if err
       done(err)
 
   describe '.new', ->
     it 'loads the publisher into the div1', (done)->
       domId = @publishDivID
-      console.log(@publishDivID)
+      debug(@publishDivID)
       streamId = "theStreamId"
       password = "thePassword"
       PublishStream.new streamId, password, domId, (publisher)=>
@@ -227,7 +227,7 @@ describe 'PublishStream', ->
   describe '_options', ->
     createPublisher = (streamId, options, done)->
       domId = @publishDivID
-      console.log(@publishDivID, options)
+      debug(@publishDivID, options)
       password = "thePassword"
       PublishStream.new streamId, password, domId, options, =>
         checkForPlayer.call(this, done)
@@ -239,8 +239,8 @@ describe 'PublishStream', ->
         ApiBridge.getStreamDetails streamId, (err, stream)=>
           expect(err).to.be.null
           actualOptions = publisher._options(stream)
-          console.log("actual", actualOptions)
-          console.log("expected", expectedOptions)
+          debug("actual", actualOptions)
+          debug("expected", expectedOptions)
           expect(actualOptions).to.deep.equal(expectedOptions)
           checkForPlayer.call(this, done)
 

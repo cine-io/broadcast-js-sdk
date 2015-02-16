@@ -4,7 +4,7 @@ ApiBridge = require('../src/api_bridge')
 ajax = require('../src/vendor/ajax')
 async = require('async')
 flashDetect = require('../src/flash_detect')
-debug = require('debug')('cine:broadcast:play_stream_test')
+debug = require('../src/debug')('cine:broadcast:play_stream_test')
 describe 'PlayStream', ->
   unless flashDetect()
     it 'needs to be checked in the browser'
