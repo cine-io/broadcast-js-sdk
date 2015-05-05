@@ -214,7 +214,13 @@ function(err, stream){ console.log('recieved err/stream', err, stream); }
 
 The stream follows the format of:
 ```json
-{"id": "the streamId", "play": {"hls": "the hls url", "rtmp": "the rtmp url"}}
+{
+  "id": "the streamId",
+  "play": {
+    "hls": "the hls url",
+    "rtmp": "the rtmp url"
+  }
+}
 ```
 
 #### getStreamRecordings
@@ -240,5 +246,12 @@ function(err, recordings){ console.log('recieved err/recordings', err, recording
 **recording response**
 
 ```json
-[{"name": "the recording name", size: size in bytes, url: "the playable url", date: "the date of the recording"}, … ]
+[{
+  "name": "the recording name",
+  "size": "size in bytes",
+  "url": "the playable url",
+  "date": "the date of the recording"
+ },
+ …
+]
 ```
